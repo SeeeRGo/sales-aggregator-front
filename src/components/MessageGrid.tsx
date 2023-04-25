@@ -1,11 +1,13 @@
 import { IMessage } from '@/types'
-import { Card, Grid } from '@mui/material'
+import { Card, Grid, Typography } from '@mui/material'
 import React from 'react'
+import { FormattedMessage } from './FormattedMessage'
 
 interface IProps {
   chats: IMessage[][]
+  titles: string[]
 }
-export const MessageGrid = ({ chats }: IProps) => {
+export const MessageGrid = ({ chats, titles }: IProps) => {
   return (
     <Grid container columnSpacing={2} direction="row">
       {chats.map((chatMessages, colIndex) => (
@@ -17,11 +19,10 @@ export const MessageGrid = ({ chats }: IProps) => {
           direction="column"
           key={colIndex}
         >
-          {chatMessages.map((message: any, i: number) => (
+          <Typography variant='h6'>Канал: {titles[colIndex]}</Typography>
+          {chatMessages.map((message, i) => (
             <Grid item key={i}>
-              <Card>
-                {message.date},{message.text}
-              </Card>
+              <FormattedMessage message={message} />
             </Grid>
           ))}
         </Grid>
