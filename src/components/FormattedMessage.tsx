@@ -1,6 +1,6 @@
 import { IMessage } from '@/types'
 import { ArchiveOutlined, Check, Close, Delete, QuestionMark } from '@mui/icons-material'
-import { Card, CardActions, CardContent, IconButton } from '@mui/material'
+import { Card, IconButton } from '@mui/material'
 import dayjs from 'dayjs'
 import React, { useState } from 'react'
 
@@ -23,6 +23,8 @@ enum ProcessStatus {
 
 export const FormattedMessage = ({ message }: IProps) => {
   const [status, setStatus] = useState(MessageStatus.PENDING)
+  // console.log('entities', message.entities);
+  
   const [processStatus, setProcessStatus] = useState(ProcessStatus.PENDING)
   return (
     <Card>
@@ -31,6 +33,9 @@ export const FormattedMessage = ({ message }: IProps) => {
           {dayjs.unix(message.date).format('DD.MM.YYYY HH:MM')}
         </div>
         <div>
+          {message.chatName}
+        </div>
+        <div className={`text-sm`}>
           {message.text}
         </div>
         <div>

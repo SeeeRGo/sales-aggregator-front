@@ -5,9 +5,8 @@ import { FormattedMessage } from './FormattedMessage'
 
 interface IProps {
   chats: IMessage[][]
-  titles: string[]
 }
-export const MessageGrid = ({ chats, titles }: IProps) => {
+export const MessageGrid = ({ chats }: IProps) => {
   return (
     <Grid container columnSpacing={2} direction="row">
       {chats.map((chatMessages, colIndex) => (
@@ -19,7 +18,6 @@ export const MessageGrid = ({ chats, titles }: IProps) => {
           direction="column"
           key={colIndex}
         >
-          <Typography variant='h6'>Канал: {titles[colIndex]}</Typography>
           {chatMessages.map((message, i) => (
             <Grid item key={i}>
               <FormattedMessage message={message} />
