@@ -32,4 +32,7 @@ export interface IChannelSummary {
   potentiallyMessages: number
 }
 
+export type UpdateChannelSummary = (prev: IChannelSummary) => IChannelSummary
+export type UpdateChannelStats = (prev: IChannelStats) => IChannelStats
+
 export type IChannelStats = Record<Category, IChannelSummary> & { name: string }

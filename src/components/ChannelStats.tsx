@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -6,12 +6,17 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import { ChannelSummary } from './ChannelSummary';
-import { supabase } from '@/db';
-import { getMessageData } from '@/api';
-import { IChannelStats } from '@/types';
-import { parseLoadedMessage } from '@/utils';
-import { channel } from 'diagnostics_channel';
+import { ChannelSummary } from "./ChannelSummary";
+import { supabase } from "@/db";
+import { getMessageData } from "@/api";
+import { IChannelStats } from "@/types";
+import {
+  createUpdateChannelStatsFromMessage,
+  createUpdateChannelStatsWithMessageGroup,
+  groupLoadedMessagesByCategory,
+  parseLoadedMessage,
+} from "@/utils";
+import { channel } from "diagnostics_channel";
 
 interface IProps {
   filter: (message: IMessage) => boolean;
@@ -100,10 +105,10 @@ export const ChannelStats = ({ filter }: IProps) => {
   }, [filter]);
 
   const messagesAll = lastHourMessages
-        .concat(lastFourHoursMessages)
-        .concat(lastDayMessages)
-        .concat(olderMessages)
-        .concat(messages.map(parseLoadedMessage))
+    .concat(lastFourHoursMessages)
+    .concat(lastDayMessages)
+    .concat(olderMessages)
+    .concat(messages.map(parseLoadedMessage));
 
   const channels = Array.from(
     new Set(messagesAll.map(({ chatName }) => chatName))
@@ -117,39 +122,27 @@ export const ChannelStats = ({ filter }: IProps) => {
     {} as Record<string, IChannelStats>
   );
 
-  const updChannels = lastDayMessages.reduce((acc, message) => {
-    const chat = acc[message.chatName];
-    if (chat) {
-      return {
-        ...acc,
-        [message.chatName]: {
-          ...chat,
-          lastDay: {
-            ...chat.lastDay,
-            totalMessages: chat.lastDay.totalMessages + 1,
-          },
-        },
-      };
-    }
-    return acc
-  }, channelsObj);
+  const { lastDay, lastHour, older, lastFourHours } = groupLoadedMessagesByCategory(messages);
 
-  const updChannelsWithOlder = olderMessages.reduce((acc, message) => {
-    const chat = acc[message.chatName];
-    if (chat) {
-      return {
-        ...acc,
-        [message.chatName]: {
-          ...chat,
-          older: {
-            ...chat.older,
-            totalMessages: chat.older.totalMessages + 1,
-          },
-        },
-      };
-    }
-    return acc;
-  }, updChannels);
+  const updChannels = createUpdateChannelStatsWithMessageGroup(
+    lastDayMessages.concat(lastDay),
+    "lastDay"
+  )(channelsObj);
+
+  const updChannelsWithOlder = createUpdateChannelStatsWithMessageGroup(
+    olderMessages.concat(older),
+    "older"
+  )(updChannels);
+  
+  const updChannelsWithLastHour = createUpdateChannelStatsWithMessageGroup(
+    lastHourMessages.concat(lastHour),
+    "lastHour"
+  )(updChannelsWithOlder);
+  
+  const updChannelsWithLastFourHours = createUpdateChannelStatsWithMessageGroup(
+    lastFourHoursMessages.concat(lastFourHours),
+    "lastFourHours"
+  )(updChannelsWithLastHour);
 
   return (
     <TableContainer component={Paper}>
@@ -168,7 +161,7 @@ export const ChannelStats = ({ filter }: IProps) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {Object.values(updChannelsWithOlder).map((channel, i) => {
+          {Object.values(updChannelsWithLastFourHours).map((channel, i) => {
             return <ChannelSummary channel={channel} key={i} />;
           })}
         </TableBody>
