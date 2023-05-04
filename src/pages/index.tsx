@@ -1,12 +1,9 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { IMessage, LoadedMessage } from "@/types";
-import { MessageGrid } from "@/components/MessageGrid";
-import { Box, Tab, Tabs, Typography } from "@mui/material";
+import { LoadedMessage } from "@/types";
+import { Box, Tab, Tabs } from "@mui/material";
 import { TabPanel } from "@/components/TabPanel";
 import { CategoryMessages } from "@/components/CategoryMessages";
 import { LoadedMessages } from "@/components/LoadedMessages";
-import { data } from "autoprefixer";
 import { supabase } from "@/db";
 import { ProcessStatus } from "@/constants";
 import { ChannelStats } from "@/components/ChannelStats";
@@ -20,7 +17,11 @@ export default function Home() {
   };
 
   useEffect(() => {
-    supabase.from("messages").select().then(({ data }) => setMessages(data));
+    supabase.from("messages").select().then(({ data }) => {
+      if(data) {
+        setMessages(data);
+      }
+    });
   }, []);
 
   return (
@@ -51,13 +52,13 @@ export default function Home() {
       </TabPanel>
       <TabPanel value={value} index={1}>
         <LoadedMessages
-          filter={({ deleted_at, processed_at }) => processed_at}
+          filter={({ deleted_at, processed_at }) => !!processed_at}
           processStatus={ProcessStatus.PROCESSED}
         />
       </TabPanel>
       <TabPanel value={value} index={2}>
         <LoadedMessages
-          filter={({ deleted_at, processed_at }) => deleted_at}
+          filter={({ deleted_at, processed_at }) => !!deleted_at}
           processStatus={ProcessStatus.DELETED}
         />
       </TabPanel>

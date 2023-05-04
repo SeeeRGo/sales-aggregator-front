@@ -9,9 +9,8 @@ import Paper from "@mui/material/Paper";
 import { ChannelSummary } from "./ChannelSummary";
 import { supabase } from "@/db";
 import { getMessageData } from "@/api";
-import { IChannelStats } from "@/types";
+import { IChannelStats, IMessage, LoadedMessage } from "@/types";
 import {
-  createUpdateChannelStatsFromMessage,
   createUpdateChannelStatsWithMessageGroup,
   groupLoadedMessagesByCategory,
   parseLoadedMessage,
@@ -77,7 +76,11 @@ export const ChannelStats = ({ filter }: IProps) => {
     supabase
       .from("messages")
       .select()
-      .then(({ data }) => setMessages(data));
+      .then(({ data }) => {
+        if(data) {
+          setMessages(data);
+        }
+      });
   }, []);
 
   const [lastHourMessages, setLastHourMessages] = useState<IMessage[]>([]);
@@ -161,8 +164,8 @@ export const ChannelStats = ({ filter }: IProps) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {Object.values(updChannelsWithLastFourHours).map((channel, i) => {
-            return <ChannelSummary channel={channel} key={i} />;
+          {Object.values(updChannelsWithLastFourHours).map((channel, i: number) => {
+            return <ChannelSummary channel={channel as IChannelStats} key={i} />;
           })}
         </TableBody>
       </Table>

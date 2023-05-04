@@ -1,8 +1,8 @@
+import { ProcessStatus } from "@/constants";
 import { supabase } from "@/db";
 import { IMessage, LoadedMessage } from "@/types";
 import { parseLoadedMessage } from "@/utils";
 import { Chip, Divider, Typography } from "@mui/material";
-import axios from "axios";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { MessageGrid } from "./MessageGrid";
@@ -13,12 +13,12 @@ interface IProps {
 }
 
 export const LoadedMessages = ({ filter, processStatus }: IProps) => {
-  const [lastHourMessages, setLastHourMessages] = useState<IMessage[][]>([]);
+  const [lastHourMessages, setLastHourMessages] = useState<IMessage[]>([]);
   const [lastFourHoursMessages, setLastFourHoursMessages] = useState<
-    IMessage[][]
+    IMessage[]
   >([]);
-  const [lastDayMessages, setLastDayMessages] = useState<IMessage[][]>([]);
-  const [olderMessages, setOlderMessages] = useState<IMessage[][]>([]);
+  const [lastDayMessages, setLastDayMessages] = useState<IMessage[]>([]);
+  const [olderMessages, setOlderMessages] = useState<IMessage[]>([]);
   useEffect(() => {
     const getData = () => {
       supabase
