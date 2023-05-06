@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { MessageStatus, ProcessStatus } from "./constants";
 import {
+  IChannelStats,
   IChannelSummary,
   IMessage,
   LoadedMessage,
@@ -80,41 +81,157 @@ export const createUpdateChannelStatsWithMessageGroup =
       return acc;
     }, prevStats);
 
-const getMessagesInDateRange = (messages: LoadedMessage[], startDate: number, endDate: number) => messages
-    .filter(({ message_date }) => message_date > startDate && message_date < endDate).map(parseLoadedMessage)
+const getMessagesInDateRange = (
+  messages: LoadedMessage[],
+  startDate: number,
+  endDate: number
+) =>
+  messages
+    .filter(
+      ({ message_date }) => message_date > startDate && message_date < endDate
+    )
+    .map(parseLoadedMessage);
 
 export const groupLoadedMessagesByCategory = (messages: LoadedMessage[]) => {
   const hourAgo = dayjs().add(-1, "hour").unix();
   const fourHoursAgo = dayjs().add(-4, "hour").unix();
   const dayAgo = dayjs().add(-1, "day").unix();
   const monthAgo = dayjs().add(-1, "month").startOf("day").unix();
-  const lastHour = getMessagesInDateRange(
-    messages,
-    hourAgo,
-    dayjs().unix()
-  );
-  const lastFourHours = getMessagesInDateRange(
-    messages,
-    fourHoursAgo,
-    hourAgo
-  );
-  const lastDay = getMessagesInDateRange(
-    messages,
-    dayAgo,
-    fourHoursAgo
-  );
-  const older = getMessagesInDateRange(
-    messages,
-    monthAgo,
-    dayAgo
-  );
+  const lastHour = getMessagesInDateRange(messages, hourAgo, dayjs().unix());
+  const lastFourHours = getMessagesInDateRange(messages, fourHoursAgo, hourAgo);
+  const lastDay = getMessagesInDateRange(messages, dayAgo, fourHoursAgo);
+  const older = getMessagesInDateRange(messages, monthAgo, dayAgo);
   return {
     lastFourHours,
     lastDay,
     lastHour,
-    older
-  }
-}
+    older,
+  };
+};
 
+export const createEmptyChannelStats = (name: string): IChannelStats => ({
+  name,
+  total: {
+    category: "total",
+    totalMessages: 0,
+    processedMessages: 0,
+    deletedMessages: 0,
+    interestingMessages: 0,
+    uninterestingMessages: 0,
+    potentiallyMessages: 0,
+  },
+  lastHour: {
+    category: "lastHour",
+    totalMessages: 0,
+    processedMessages: 0,
+    deletedMessages: 0,
+    interestingMessages: 0,
+    uninterestingMessages: 0,
+    potentiallyMessages: 0,
+  },
+  lastFourHours: {
+    category: "lastFourHours",
+    totalMessages: 0,
+    processedMessages: 0,
+    deletedMessages: 0,
+    interestingMessages: 0,
+    uninterestingMessages: 0,
+    potentiallyMessages: 0,
+  },
+  lastDay: {
+    category: "lastDay",
+    totalMessages: 0,
+    processedMessages: 0,
+    deletedMessages: 0,
+    interestingMessages: 0,
+    uninterestingMessages: 0,
+    potentiallyMessages: 0,
+  },
+  older: {
+    category: "older",
+    totalMessages: 0,
+    processedMessages: 0,
+    deletedMessages: 0,
+    interestingMessages: 0,
+    uninterestingMessages: 0,
+    potentiallyMessages: 0,
+  },
+});
 
-
+export const addChannelToStats = (
+  { name, total, lastDay, lastFourHours, lastHour, older }: IChannelStats,
+  channel: IChannelStats
+): IChannelStats => ({
+  name,
+  total: {
+    ...total,
+    totalMessages: total.totalMessages + channel.total.totalMessages,
+    processedMessages:
+      total.processedMessages + channel.total.processedMessages,
+    deletedMessages: total.deletedMessages + channel.total.deletedMessages,
+    interestingMessages:
+      total.interestingMessages + channel.total.interestingMessages,
+    uninterestingMessages:
+      total.uninterestingMessages + channel.total.uninterestingMessages,
+    potentiallyMessages:
+      total.potentiallyMessages + channel.total.potentiallyMessages,
+  },
+  lastHour: {
+    ...lastHour,
+    totalMessages: lastHour.totalMessages + channel.lastHour.totalMessages,
+    processedMessages:
+      lastHour.processedMessages + channel.lastHour.processedMessages,
+    deletedMessages:
+      lastHour.deletedMessages + channel.lastHour.deletedMessages,
+    interestingMessages:
+      lastHour.interestingMessages + channel.lastHour.interestingMessages,
+    uninterestingMessages:
+      lastHour.uninterestingMessages + channel.lastHour.uninterestingMessages,
+    potentiallyMessages:
+      lastHour.potentiallyMessages + channel.lastHour.potentiallyMessages,
+  },
+  lastFourHours: {
+    ...lastFourHours,
+    totalMessages:
+      lastFourHours.totalMessages + channel.lastFourHours.totalMessages,
+    processedMessages:
+      lastFourHours.processedMessages + channel.lastFourHours.processedMessages,
+    deletedMessages:
+      lastFourHours.deletedMessages + channel.lastFourHours.deletedMessages,
+    interestingMessages:
+      lastFourHours.interestingMessages +
+      channel.lastFourHours.interestingMessages,
+    uninterestingMessages:
+      lastFourHours.uninterestingMessages +
+      channel.lastFourHours.uninterestingMessages,
+    potentiallyMessages:
+      lastFourHours.potentiallyMessages +
+      channel.lastFourHours.potentiallyMessages,
+  },
+  lastDay: {
+    ...lastDay,
+    totalMessages: lastDay.totalMessages + channel.lastDay.totalMessages,
+    processedMessages:
+      lastDay.processedMessages + channel.lastDay.processedMessages,
+    deletedMessages: lastDay.deletedMessages + channel.lastDay.deletedMessages,
+    interestingMessages:
+      lastDay.interestingMessages + channel.lastDay.interestingMessages,
+    uninterestingMessages:
+      lastDay.uninterestingMessages + channel.lastDay.uninterestingMessages,
+    potentiallyMessages:
+      lastDay.potentiallyMessages + channel.lastDay.potentiallyMessages,
+  },
+  older: {
+    ...older,
+    totalMessages: older.totalMessages + channel.older.totalMessages,
+    processedMessages:
+      older.processedMessages + channel.older.processedMessages,
+    deletedMessages: older.deletedMessages + channel.older.deletedMessages,
+    interestingMessages:
+      older.interestingMessages + channel.older.interestingMessages,
+    uninterestingMessages:
+      older.uninterestingMessages + channel.older.uninterestingMessages,
+    potentiallyMessages:
+      older.potentiallyMessages + channel.older.potentiallyMessages,
+  },
+});

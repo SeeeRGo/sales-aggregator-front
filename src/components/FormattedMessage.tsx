@@ -11,6 +11,7 @@ import dayjs from "dayjs";
 import { supabase } from "../db";
 import React, { useState } from "react";
 import { MessageStatus, ProcessStatus } from "@/constants";
+import { StatusTooltip } from "./StatusButton";
 
 interface IProps {
   message: IMessage;
@@ -21,10 +22,12 @@ export const FormattedMessage = ({ message, processStatus }: IProps) => {
   const [status, setStatus] = useState(message.status);
 
   const [process, setProcessStatus] = useState(processStatus);
+  // console.log("dayjs.unix(message.date)", dayjs.unix(message.date));
+  
   return (
     <Card>
       <div style={{ display: "flex", flexDirection: "column" }}>
-        <div>{dayjs.unix(message.date).format("DD.MM.YYYY HH:MM")}</div>
+        <div>{dayjs.unix(message.date).format("DD.MM.YYYY HH:mm:ss")}</div>
         <div>{message.chatName}</div>
         <div className={`text-sm`}>{message.text}</div>
         <div>
@@ -33,80 +36,92 @@ export const FormattedMessage = ({ message, processStatus }: IProps) => {
       </div>
       <div className="flex justify-between flex-row">
         <div>
-          <IconButton
-            onClick={async () => {
-              await supabase.from("messages").upsert({
-                tg_message_id: message.messageId,
-                tg_chat_name: message.chatName,
-                message_date: message.date,
-                text: message.text,
-                status: MessageStatus.APPROVED,
-              });
-              return setStatus(MessageStatus.APPROVED);
-            }}
-          >
-            <Check color="success" />
-          </IconButton>
-          <IconButton
-            onClick={async () => {
-              await supabase.from("messages").upsert({
-                tg_message_id: message.messageId,
-                tg_chat_name: message.chatName,
-                message_date: message.date,
-                text: message.text,
-                status: MessageStatus.REJECTED,
-              });
-              return setStatus(MessageStatus.REJECTED);
-            }}
-          >
-            <Close color="error" />
-          </IconButton>
-          <IconButton
-            onClick={async () => {
-              await supabase.from("messages").upsert({
-                tg_message_id: message.messageId,
-                tg_chat_name: message.chatName,
-                message_date: message.date,
-                text: message.text,
-                status: MessageStatus.INTERESTING,
-              });
-              return setStatus(MessageStatus.INTERESTING);
-            }}
-          >
-            <QuestionMark />
-          </IconButton>
+          <StatusTooltip title="Пометить как интересное">
+            <IconButton
+              onClick={async () => {
+                await supabase.from("messages").upsert({
+                  tg_message_id: message.messageId,
+                  tg_chat_name: message.chatName,
+                  message_date: message.date,
+                  text: message.text,
+                  status: MessageStatus.APPROVED,
+                });
+                return setStatus(MessageStatus.APPROVED);
+              }}
+            >
+              <Check color="success" />
+            </IconButton>
+          </StatusTooltip>
+          <StatusTooltip title="Пометить как неинтересное">
+            <IconButton
+              onClick={async () => {
+                await supabase.from("messages").upsert({
+                  tg_message_id: message.messageId,
+                  tg_chat_name: message.chatName,
+                  message_date: message.date,
+                  text: message.text,
+                  status: MessageStatus.REJECTED,
+                });
+                return setStatus(MessageStatus.REJECTED);
+              }}
+            >
+              <Close color="error" />
+            </IconButton>
+          </StatusTooltip>
+          <StatusTooltip title="Пометить как потенциально интересное">
+            <IconButton
+              onClick={async () => {
+                await supabase.from("messages").upsert({
+                  tg_message_id: message.messageId,
+                  tg_chat_name: message.chatName,
+                  message_date: message.date,
+                  text: message.text,
+                  status: MessageStatus.INTERESTING,
+                });
+                return setStatus(MessageStatus.INTERESTING);
+              }}
+            >
+              <QuestionMark />
+            </IconButton>
+          </StatusTooltip>
         </div>
         <div>
-          <IconButton
-            onClick={async () => {
-              await supabase.from("messages").upsert({
-                tg_message_id: message.messageId,
-                tg_chat_name: message.chatName,
-                message_date: message.date,
-                text: message.text,
-                processed_at: dayjs(),
-                deleted_at: null,
-              });
-              return setProcessStatus(ProcessStatus.PROCESSED);
-            }}
-          >
-            <ArchiveOutlined color="primary" />
-          </IconButton>
-          <IconButton
-            onClick={async () => {
-              await supabase.from("messages").upsert({
-                tg_message_id: message.messageId,
-                tg_chat_name: message.chatName,
-                message_date: message.date,
-                text: message.text,
-                deleted_at: dayjs(),
-                processed_at: null,
-              });
-              return setProcessStatus(ProcessStatus.DELETED);
-            }}
-          >
-            <Delete color="secondary" />
-          </IconButton>
+          <StatusTooltip title="Сообщение обработано. Нельзя поставить пока не установлен статус сообщения">
+            <IconButton
+              onClick={async () => {
+                if (status === MessageStatus.PENDING) return;
+                await supabase.from("messages").upsert({
+                  tg_message_id: message.messageId,
+                  tg_chat_name: message.chatName,
+                  message_date: message.date,
+                  text: message.text,
+                  processed_at: dayjs(),
+                  deleted_at: null,
+                });
+                return setProcessStatus(ProcessStatus.PROCESSED);
+              }}
+            >
+              <ArchiveOutlined color="primary" />
+            </IconButton>
+          </StatusTooltip>
+          <StatusTooltip title="Переместить сообщение в корзину. Нельзя поставить пока не установлен статус сообщения">
+            <IconButton
+              onClick={async () => {
+                if (status === MessageStatus.PENDING) return;
+                await supabase.from("messages").upsert({
+                  tg_message_id: message.messageId,
+                  tg_chat_name: message.chatName,
+                  message_date: message.date,
+                  text: message.text,
+                  deleted_at: dayjs(),
+                  processed_at: null,
+                });
+                return setProcessStatus(ProcessStatus.DELETED);
+              }}
+            >
+              <Delete color="secondary" />
+            </IconButton>
+          </StatusTooltip>
         </div>
       </div>
     </Card>

@@ -26,7 +26,7 @@ export default function Home() {
 
   return (
     <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24`}
+      className={`flex flex-col items-center justify-between`}
     >
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs

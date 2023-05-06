@@ -9,8 +9,15 @@ import Paper from "@mui/material/Paper";
 import { ChannelSummary } from "./ChannelSummary";
 import { supabase } from "@/db";
 import { getMessageData } from "@/api";
-import { IChannelStats, IMessage, LoadedMessage } from "@/types";
 import {
+  IChannelStats,
+  IChannelSummary,
+  IMessage,
+  LoadedMessage,
+} from "@/types";
+import {
+  addChannelToStats,
+  createEmptyChannelStats,
   createUpdateChannelStatsWithMessageGroup,
   groupLoadedMessagesByCategory,
   parseLoadedMessage,
@@ -21,54 +28,6 @@ interface IProps {
   filter: (message: IMessage) => boolean;
 }
 
-const createEmptyChannelStats = (name: string): IChannelStats => ({
-  name,
-  total: {
-    category: "total",
-    totalMessages: 0,
-    processedMessages: 0,
-    deletedMessages: 0,
-    interestingMessages: 0,
-    uninterestingMessages: 0,
-    potentiallyMessages: 0,
-  },
-  lastHour: {
-    category: "lastHour",
-    totalMessages: 0,
-    processedMessages: 0,
-    deletedMessages: 0,
-    interestingMessages: 0,
-    uninterestingMessages: 0,
-    potentiallyMessages: 0,
-  },
-  lastFourHours: {
-    category: "lastFourHours",
-    totalMessages: 0,
-    processedMessages: 0,
-    deletedMessages: 0,
-    interestingMessages: 0,
-    uninterestingMessages: 0,
-    potentiallyMessages: 0,
-  },
-  lastDay: {
-    category: "lastDay",
-    totalMessages: 0,
-    processedMessages: 0,
-    deletedMessages: 0,
-    interestingMessages: 0,
-    uninterestingMessages: 0,
-    potentiallyMessages: 0,
-  },
-  older: {
-    category: "older",
-    totalMessages: 0,
-    processedMessages: 0,
-    deletedMessages: 0,
-    interestingMessages: 0,
-    uninterestingMessages: 0,
-    potentiallyMessages: 0,
-  },
-});
 export const ChannelStats = ({ filter }: IProps) => {
   const [messages, setMessages] = useState<LoadedMessage[]>([]);
 
@@ -77,7 +36,7 @@ export const ChannelStats = ({ filter }: IProps) => {
       .from("messages")
       .select()
       .then(({ data }) => {
-        if(data) {
+        if (data) {
           setMessages(data);
         }
       });
@@ -125,7 +84,8 @@ export const ChannelStats = ({ filter }: IProps) => {
     {} as Record<string, IChannelStats>
   );
 
-  const { lastDay, lastHour, older, lastFourHours } = groupLoadedMessagesByCategory(messages);
+  const { lastDay, lastHour, older, lastFourHours } =
+    groupLoadedMessagesByCategory(messages);
 
   const updChannels = createUpdateChannelStatsWithMessageGroup(
     lastDayMessages.concat(lastDay),
@@ -136,39 +96,55 @@ export const ChannelStats = ({ filter }: IProps) => {
     olderMessages.concat(older),
     "older"
   )(updChannels);
-  
+
   const updChannelsWithLastHour = createUpdateChannelStatsWithMessageGroup(
     lastHourMessages.concat(lastHour),
     "lastHour"
   )(updChannelsWithOlder);
-  
+
   const updChannelsWithLastFourHours = createUpdateChannelStatsWithMessageGroup(
     lastFourHoursMessages.concat(lastFourHours),
     "lastFourHours"
   )(updChannelsWithLastHour);
+  const allMessagesAll = [
+    ...lastDayMessages.concat(lastDay),
+    ...olderMessages.concat(older),
+    ...lastHourMessages.concat(lastHour),
+    ...lastFourHoursMessages.concat(lastFourHours),
+  ];
+
+  const updChannelsWithTotals = createUpdateChannelStatsWithMessageGroup(
+    allMessagesAll,
+    "total"
+  )(updChannelsWithLastFourHours);
+
+  const channelsVals = Object.values(updChannelsWithTotals);
+  const totalStats = channelsVals.reduce(
+    (acc, channel: IChannelSummary) => addChannelToStats(acc, channel),
+    createEmptyChannelStats(`Общая статистика - ${channelsVals.length} каналов`) // Активных каналов в последний час, четыре часа, сутки, более старые
+  );
 
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-            {/* <TableCell /> */}
-            <TableCell>Название канала</TableCell>
-            <TableCell align="right">Период</TableCell>
-            <TableCell align="right">Всего сообщений</TableCell>
-            <TableCell align="right">Интересные сообщения</TableCell>
-            <TableCell align="right">Потенциально интересные</TableCell>
-            <TableCell align="right">Неинтересные сообщения</TableCell>
-            <TableCell align="right">Обработанные сообщения</TableCell>
-            <TableCell align="right">Удаленные сообщения</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {Object.values(updChannelsWithLastFourHours).map((channel, i: number) => {
-            return <ChannelSummary channel={channel as IChannelStats} key={i} />;
-          })}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <Table stickyHeader sx={{ minWidth: 650, maxHeight: "calc(100vh - 72px)" }}>
+      <TableHead>
+        <TableRow>
+          {/* <TableCell /> */}
+          <TableCell>Название канала</TableCell>
+          <TableCell align="right">Период</TableCell>
+          <TableCell align="right">Всего сообщений</TableCell>
+          <TableCell align="right">Интересные сообщения</TableCell>
+          <TableCell align="right">Потенциально интересные</TableCell>
+          <TableCell align="right">Неинтересные сообщения</TableCell>
+          <TableCell align="right">Обработанные сообщения</TableCell>
+          <TableCell align="right">Удаленные сообщения</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        <ChannelSummary channel={totalStats} />
+        {channelsVals.map((channel, i: number) => {
+          return <ChannelSummary channel={channel as IChannelStats} key={i} />;
+        })}
+      </TableBody>
+    </Table>
   );
 };
