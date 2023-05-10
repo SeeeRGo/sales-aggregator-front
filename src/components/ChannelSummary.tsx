@@ -17,7 +17,7 @@ export const ChannelSummary = ({ channel }: IProps) => {
   return (
     <>
       <TableRow sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
-        {/* <TableCell>
+        <TableCell>
           <IconButton
             aria-label="expand row"
             size="small"
@@ -25,30 +25,35 @@ export const ChannelSummary = ({ channel }: IProps) => {
           >
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
-        </TableCell> */}
+        </TableCell>
         <TableCell>{channel.name}</TableCell>
         <ChannelRow channel={channel.total} />
       </TableRow>
-      <TableRow>
-        {/* <TableCell /> */}
-        <TableCell />
-        <ChannelRow channel={channel.lastHour} />
-      </TableRow>
-      <TableRow>
-        {/* <TableCell /> */}
-        <TableCell />
-        <ChannelRow channel={channel.lastFourHours} />
-      </TableRow>
-      <TableRow>
-        {/* <TableCell /> */}
-        <TableCell />
-        <ChannelRow channel={channel.lastDay} />
-      </TableRow>
-      <TableRow>
-        {/* <TableCell /> */}
-        <TableCell />
-        <ChannelRow channel={channel.older} />
-      </TableRow>
+      {open && (
+        <>
+          <TableRow>
+            <TableCell />
+            <TableCell />
+            <ChannelRow channel={channel.lastHour} />
+          </TableRow>
+          <TableRow>
+            <TableCell />
+            <TableCell />
+            <ChannelRow channel={channel.lastFourHours} />
+          </TableRow>
+          <TableRow>
+            <TableCell />
+            <TableCell />
+            <ChannelRow channel={channel.lastDay} />
+          </TableRow>
+          <TableRow>
+            <TableCell />
+            <TableCell />
+            <ChannelRow channel={channel.older} />
+          </TableRow>
+        </>
+      )
+      }
     </>
   );
 }

@@ -5,6 +5,7 @@ import {
   IChannelSummary,
   IMessage,
   LoadedMessage,
+  UpdateChannelStats,
   UpdateChannelSummary,
 } from "./types";
 
@@ -234,4 +235,8 @@ export const addChannelToStats = (
     potentiallyMessages:
       older.potentiallyMessages + channel.older.potentiallyMessages,
   },
-});
+} as IChannelStats);
+
+export const isLoadedMessages = (value: {
+    [x: string]: any;
+}[] | null): value is LoadedMessage[] => !!value

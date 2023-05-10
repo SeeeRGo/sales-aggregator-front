@@ -20,6 +20,7 @@ import {
   createEmptyChannelStats,
   createUpdateChannelStatsWithMessageGroup,
   groupLoadedMessagesByCategory,
+  isLoadedMessages,
   parseLoadedMessage,
 } from "@/utils";
 import { channel } from "diagnostics_channel";
@@ -36,7 +37,7 @@ export const ChannelStats = ({ filter }: IProps) => {
       .from("messages")
       .select()
       .then(({ data }) => {
-        if (data) {
+        if (isLoadedMessages(data)) {
           setMessages(data);
         }
       });
@@ -118,9 +119,10 @@ export const ChannelStats = ({ filter }: IProps) => {
     "total"
   )(updChannelsWithLastFourHours);
 
-  const channelsVals = Object.values(updChannelsWithTotals);
+  const channelsVals = Object.values<IChannelStats>(updChannelsWithTotals);
   const totalStats = channelsVals.reduce(
-    (acc, channel: IChannelSummary) => addChannelToStats(acc, channel),
+    (acc: IChannelStats, channel: IChannelStats) =>
+      addChannelToStats(acc, channel),
     createEmptyChannelStats(`Общая статистика - ${channelsVals.length} каналов`) // Активных каналов в последний час, четыре часа, сутки, более старые
   );
 
@@ -128,7 +130,7 @@ export const ChannelStats = ({ filter }: IProps) => {
     <Table stickyHeader sx={{ minWidth: 650, maxHeight: "calc(100vh - 72px)" }}>
       <TableHead>
         <TableRow>
-          {/* <TableCell /> */}
+          <TableCell />
           <TableCell>Название канала</TableCell>
           <TableCell align="right">Период</TableCell>
           <TableCell align="right">Всего сообщений</TableCell>

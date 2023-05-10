@@ -7,6 +7,7 @@ import { LoadedMessages } from "@/components/LoadedMessages";
 import { supabase } from "@/db";
 import { ProcessStatus } from "@/constants";
 import { ChannelStats } from "@/components/ChannelStats";
+import { isLoadedMessages } from "@/utils";
 
 export default function Home() {
   const [value, setValue] = useState(0);
@@ -18,7 +19,7 @@ export default function Home() {
 
   useEffect(() => {
     supabase.from("messages").select().then(({ data }) => {
-      if(data) {
+      if(isLoadedMessages(data)) {
         setMessages(data);
       }
     });

@@ -1,7 +1,7 @@
 import { ProcessStatus } from "@/constants";
 import { supabase } from "@/db";
 import { IMessage, LoadedMessage } from "@/types";
-import { parseLoadedMessage } from "@/utils";
+import { isLoadedMessages, parseLoadedMessage } from "@/utils";
 import { Chip, Divider, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
@@ -29,56 +29,57 @@ export const LoadedMessages = ({ filter, processStatus }: IProps) => {
           const fourHoursAgo = dayjs().add(-4, "hour").unix();
           const dayAgo = dayjs().add(-1, "day").unix();
           const monthAgo = dayjs().add(-1, "month").startOf("day").unix();
-          const lastHour = data
-            ?.filter(({ message_date }) => message_date > hourAgo)
-            .filter(filter)
-            .map(parseLoadedMessage)
-            .sort((a, b) => b.date - a.date);
+          if (isLoadedMessages(data)) {
+            const lastHour = data
+              ?.filter(({ message_date }) => message_date > hourAgo)
+              .filter(filter)
+              .map(parseLoadedMessage)
+              .sort((a, b) => b.date - a.date);
 
-          if (lastHour) {
-            setLastHourMessages(lastHour);
+            if (lastHour) {
+              setLastHourMessages(lastHour);
+            }
+
+            const oneToFourHours = data
+              ?.filter(
+                ({ message_date }) =>
+                  message_date < hourAgo && message_date > fourHoursAgo
+              )
+              .filter(filter)
+              .map(parseLoadedMessage)
+              .sort((a, b) => b.date - a.date);
+
+            if (oneToFourHours) {
+              setLastFourHoursMessages(oneToFourHours);
+            }
+
+            const fourHoursToDay = data
+              ?.filter(
+                ({ message_date }) =>
+                  message_date < fourHoursAgo && message_date > dayAgo
+              )
+              .filter(filter)
+              .map(parseLoadedMessage)
+              .sort((a, b) => b.date - a.date);
+
+            if (fourHoursToDay) {
+              setLastDayMessages(fourHoursToDay);
+            }
+
+            const olderMessages = data
+              ?.filter(
+                ({ message_date }) =>
+                  message_date < dayAgo && message_date > monthAgo
+              )
+              .filter(filter)
+              .map(parseLoadedMessage)
+              .sort((a, b) => b.date - a.date);
+
+            if (olderMessages) {
+              setOlderMessages(olderMessages);
+            }
           }
-
-          const oneToFourHours = data
-            ?.filter(
-              ({ message_date }) =>
-                message_date < hourAgo && message_date > fourHoursAgo
-            )
-            .filter(filter)
-            .map(parseLoadedMessage)
-            .sort((a, b) => b.date - a.date);
-
-          if (oneToFourHours) {
-            setLastFourHoursMessages(oneToFourHours);
-          }
-
-          const fourHoursToDay = data
-            ?.filter(
-              ({ message_date }) =>
-                message_date < fourHoursAgo && message_date > dayAgo
-            )
-            .filter(filter)
-            .map(parseLoadedMessage)
-            .sort((a, b) => b.date - a.date);
-
-          if (fourHoursToDay) {
-            setLastDayMessages(fourHoursToDay);
-          }
-
-          const olderMessages = data
-            ?.filter(
-              ({ message_date }) =>
-                message_date < dayAgo && message_date > monthAgo
-            )
-            .filter(filter)
-            .map(parseLoadedMessage)
-            .sort((a, b) => b.date - a.date);
-
-          if (olderMessages) {
-            setOlderMessages(olderMessages);
-          }
-        })
-        .catch();
+        });
     };
     getData();
     const interval = setInterval(getData, 180000);

@@ -6,12 +6,13 @@ import {
   Delete,
   QuestionMark,
 } from "@mui/icons-material";
-import { Card, IconButton } from "@mui/material";
+import { Card, IconButton, Link, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import { supabase } from "../db";
 import React, { useState } from "react";
 import { MessageStatus, ProcessStatus } from "@/constants";
 import { StatusTooltip } from "./StatusButton";
+import { parseEntities } from "@/parseEntities";
 
 interface IProps {
   message: IMessage;
@@ -22,14 +23,18 @@ export const FormattedMessage = ({ message, processStatus }: IProps) => {
   const [status, setStatus] = useState(message.status);
 
   const [process, setProcessStatus] = useState(processStatus);
-  // console.log("dayjs.unix(message.date)", dayjs.unix(message.date));
-  
+
   return (
     <Card>
       <div style={{ display: "flex", flexDirection: "column" }}>
         <div>{dayjs.unix(message.date).format("DD.MM.YYYY HH:mm:ss")}</div>
         <div>{message.chatName}</div>
-        <div className={`text-sm`}>{message.text}</div>
+        {message.link && (
+          <Link href={message.link}>Ссылка на оригинал сообщения</Link>
+        )}
+        <div className={`text-sm whitespace-pre-line`}>
+          {parseEntities(message)}
+        </div>
         <div>
           {status} / {process}
         </div>

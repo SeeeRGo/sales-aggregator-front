@@ -1,38 +1,73 @@
-import { MessageStatus, ProcessStatus } from "@/constants"
+import { MessageStatus, ProcessStatus } from "@/constants";
 
-export interface IMessage {
+export interface BaseMessage {
   date: number;
   text: string;
-  entities: any[];
+  link?: string;
+  entities: TextEntity[];
   chatName: string;
   messageId: string;
+}
+export interface IMessage extends BaseMessage {
   status: MessageStatus;
   processStatus: ProcessStatus;
 }
 
 export interface LoadedMessage {
-  tg_message_id: string
-  tg_chat_name: string
-  text: string
-  message_date: number
-  status: MessageStatus | null
-  deleted_at: string | null
-  processed_at: string | null
+  tg_message_id: string;
+  tg_chat_name: string;
+  text: string;
+  message_date: number;
+  status: MessageStatus | null;
+  deleted_at: string | null;
+  processed_at: string | null;
 }
 
-type Category = 'total' | 'lastHour' | 'lastFourHours' | 'lastDay' | 'older'
+export type Category =
+  | "total"
+  | "lastHour"
+  | "lastFourHours"
+  | "lastDay"
+  | "older";
 
 export interface IChannelSummary {
-  category: Category
-  totalMessages: number
-  processedMessages: number
-  deletedMessages: number
-  interestingMessages: number
-  uninterestingMessages: number
-  potentiallyMessages: number
+  category: Category;
+  totalMessages: number;
+  processedMessages: number;
+  deletedMessages: number;
+  interestingMessages: number;
+  uninterestingMessages: number;
+  potentiallyMessages: number;
 }
 
-export type UpdateChannelSummary = (prev: IChannelSummary) => IChannelSummary
-export type UpdateChannelStats = (prev: IChannelStats) => IChannelStats
+export type UpdateChannelSummary = (prev: IChannelSummary) => IChannelSummary;
+export type UpdateChannelStats = (
+  prev: Record<string, IChannelStats>
+) => Record<string, IChannelStats>;
 
-export type IChannelStats = Record<Category, IChannelSummary> & { name: string }
+export type IChannelStats = Record<Category, IChannelSummary> & {
+  name: string;
+};
+
+export type TextEntityTypeTextUrl = {
+  _: "textEntityTypeTextUrl";
+  /** HTTP or tg:// URL to be opened when the link is clicked */
+  url: string;
+};
+export type TextEntityType =
+  | "textEntityTypeHashtag"
+  | "textEntityTypeUrl"
+  | "textEntityTypeBold"
+  | "textEntityTypeItalic"
+  | "textEntityTypeUnderline"
+  | "textEntityTypeStrikethrough"
+  | TextEntityTypeTextUrl;
+
+export interface TextEntity {
+  /** Offset of the entity, in UTF-16 code units */
+  offset: number;
+  /** Length of the entity, in UTF-16 code units */
+  length: number;
+  /** Type of the entity */
+  type: TextEntityType;
+}
