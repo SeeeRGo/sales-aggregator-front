@@ -12,7 +12,7 @@ export const MessageGrid = ({ chatMessages, processStatus }: IProps) => {
   return (
     <Grid container columnSpacing={2} rowSpacing={2} direction="row">
       {chatMessages.map((message, i) => (
-        <Grid item xs={6} key={i}>
+        <Grid item xs={3} key={i}>
           <FormattedMessage message={message} processStatus={processStatus} />
         </Grid>
       ))}
