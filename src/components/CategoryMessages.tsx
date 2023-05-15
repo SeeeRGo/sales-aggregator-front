@@ -7,27 +7,13 @@ import React, { useEffect, useState } from "react";
 import { MessageGrid } from "./MessageGrid";
 
 interface IProps {
-  filter: (message: IMessage) => boolean;
+  lastHourMessages: IMessage[]
+  lastFourHoursMessages: IMessage[]
+  lastDayMessages: IMessage[]
+  olderMessages: IMessage[]
 }
 
-export const CategoryMessages = ({ filter }: IProps) => {
-  const [lastHourMessages, setLastHourMessages] = useState<IMessage[]>([]);
-  const [lastFourHoursMessages, setLastFourHoursMessages] = useState<
-    IMessage[]
-  >([]);
-  const [lastDayMessages, setLastDayMessages] = useState<IMessage[]>([]);
-  const [olderMessages, setOlderMessages] = useState<IMessage[]>([]);
-  useEffect(() => {
-    getMessageData().then(({ lastDayMessages, lastFourHourMessages, lastHourMessages, olderMessages }) => {
-      setLastHourMessages(lastHourMessages.filter(filter));
-      setLastFourHoursMessages(lastFourHourMessages.filter(filter));
-      setLastDayMessages(lastDayMessages.filter(filter));
-      setOlderMessages(olderMessages.filter(filter));
-    })
-    const interval = setInterval(getMessageData, 180000);
-    return () => clearInterval(interval);
-  }, [filter]);
-
+export const CategoryMessages = ({ lastHourMessages, lastFourHoursMessages, lastDayMessages, olderMessages }: IProps) => {
   return (
     <>
       <Divider style={{ marginBottom: "12px" }}>

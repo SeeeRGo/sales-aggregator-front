@@ -39,13 +39,13 @@ const parseEntity = (type: TextEntityType, content: string) => {
     return <Link href={type.url}>{content}</Link>;
   }
   switch (type) {
-    case 'textEntityTypeBold':
+    case 'MessageEntityBold':
       return <b>{content}</b>;
-    case 'textEntityTypeItalic':
+    case 'MessageEntityItalic':
       return <i>{content}</i>
-    case 'textEntityTypeStrikethrough':
+    case 'MessageEntityStrikethrough':
       return <span style={{ textDecorationLine: 'line-through' }}>{content}</span>
-    case 'textEntityTypeUnderline':
+    case 'MessageEntityUnderline':
       return <span style={{ textDecorationLine: 'underline' }}>{content}</span>
     default:
       return content

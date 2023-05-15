@@ -3,6 +3,7 @@ import {
   ArchiveOutlined,
   Check,
   Close,
+  CopyAll,
   Delete,
   QuestionMark,
 } from "@mui/icons-material";
@@ -27,7 +28,7 @@ export const FormattedMessage = ({ message, processStatus }: IProps) => {
   return (
     <Card>
       <div style={{ display: "flex", flexDirection: "column" }}>
-        <div>{dayjs.unix(message.date).format("DD.MM.YYYY HH:mm:ss")}</div>
+        <div>{dayjs.unix(message.date).format("DD.MM.YYYY HH:mm:ss")} - {status}</div>
         <div>{message.chatName}</div>
         {message.link && (
           <Link href={message.link}>Ссылка на оригинал сообщения</Link>
@@ -36,12 +37,12 @@ export const FormattedMessage = ({ message, processStatus }: IProps) => {
           {parseEntities(message)}
         </div>
         <div>
-          {status} / {process}
+          Статус обработки: {process}
         </div>
       </div>
       <div className="flex justify-between flex-row">
         <div>
-          <StatusTooltip title="Пометить как интересное">
+          <StatusTooltip title="INTERESTING">
             <IconButton
               onClick={async () => {
                 await supabase.from("messages").upsert({
@@ -57,7 +58,7 @@ export const FormattedMessage = ({ message, processStatus }: IProps) => {
               <Check color="success" />
             </IconButton>
           </StatusTooltip>
-          <StatusTooltip title="Пометить как неинтересное">
+          <StatusTooltip title="IGNORED">
             <IconButton
               onClick={async () => {
                 await supabase.from("messages").upsert({
@@ -73,7 +74,7 @@ export const FormattedMessage = ({ message, processStatus }: IProps) => {
               <Close color="error" />
             </IconButton>
           </StatusTooltip>
-          <StatusTooltip title="Пометить как потенциально интересное">
+          <StatusTooltip title="POTENTIAL">
             <IconButton
               onClick={async () => {
                 await supabase.from("messages").upsert({
@@ -87,6 +88,22 @@ export const FormattedMessage = ({ message, processStatus }: IProps) => {
               }}
             >
               <QuestionMark />
+            </IconButton>
+          </StatusTooltip>
+          <StatusTooltip title="COPY">
+            <IconButton
+              onClick={async () => {
+                await supabase.from("messages").upsert({
+                  tg_message_id: message.messageId,
+                  tg_chat_name: message.chatName,
+                  message_date: message.date,
+                  text: message.text,
+                  status: MessageStatus.COPY,
+                });
+                return setStatus(MessageStatus.COPY);
+              }}
+            >
+              <CopyAll color="warning" />
             </IconButton>
           </StatusTooltip>
         </div>

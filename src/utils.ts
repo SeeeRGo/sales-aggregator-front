@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import React from "react";
 import { MessageStatus, ProcessStatus } from "./constants";
 import {
   IChannelStats,
@@ -110,7 +111,7 @@ export const groupLoadedMessagesByCategory = (messages: LoadedMessage[]) => {
   };
 };
 
-export const createEmptyChannelStats = (name: string): IChannelStats => ({
+export const createEmptyChannelStats = (name: React.ReactNode): IChannelStats => ({
   name,
   total: {
     category: "total",

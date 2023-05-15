@@ -1,4 +1,5 @@
 import { MessageStatus, ProcessStatus } from "@/constants";
+import React from "react";
 
 export interface BaseMessage {
   date: number;
@@ -46,7 +47,7 @@ export type UpdateChannelStats = (
 ) => Record<string, IChannelStats>;
 
 export type IChannelStats = Record<Category, IChannelSummary> & {
-  name: string;
+  name: React.ReactNode;
 };
 
 export type TextEntityTypeTextUrl = {
@@ -55,13 +56,13 @@ export type TextEntityTypeTextUrl = {
   url: string;
 };
 export type TextEntityType =
-  | "textEntityTypeHashtag"
-  | "textEntityTypeUrl"
-  | "textEntityTypeBold"
-  | "textEntityTypeItalic"
-  | "textEntityTypeUnderline"
-  | "textEntityTypeStrikethrough"
-  | TextEntityTypeTextUrl;
+  | "MessageEntityHashtag"
+  | "MessageEntityUrl"
+  | "MessageEntityBold"
+  | "MessageEntityItalic"
+  | "MessageEntityUnderline"
+  | "MessageEntityStrikethrough"
+  | "MessageEntityTextUrl";
 
 export interface TextEntity {
   /** Offset of the entity, in UTF-16 code units */
@@ -69,5 +70,6 @@ export interface TextEntity {
   /** Length of the entity, in UTF-16 code units */
   length: number;
   /** Type of the entity */
-  type: TextEntityType;
+  className: TextEntityType;
+  url?: string
 }

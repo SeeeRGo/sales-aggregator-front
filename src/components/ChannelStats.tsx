@@ -80,7 +80,7 @@ export const ChannelStats = ({ filter }: IProps) => {
   const channelsObj = channels.reduce(
     (acc, channel) => ({
       ...acc,
-      [channel.name]: channel,
+      [typeof channel.name === 'string' ? channel.name : 'summary channel']: channel,
     }),
     {} as Record<string, IChannelStats>
   );
@@ -123,7 +123,7 @@ export const ChannelStats = ({ filter }: IProps) => {
   const totalStats = channelsVals.reduce(
     (acc: IChannelStats, channel: IChannelStats) =>
       addChannelToStats(acc, channel),
-    createEmptyChannelStats(`Общая статистика - ${channelsVals.length} каналов`) // Активных каналов в последний час, четыре часа, сутки, более старые
+    createEmptyChannelStats(<>Общая статистика по каналам: <b style={{ fontSize: 20 }}>{channelsVals.length}</b></>) // Активных каналов в последний час, четыре часа, сутки, более старые
   );
 
   return (

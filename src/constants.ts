@@ -1,8 +1,9 @@
 export enum MessageStatus {
   PENDING = "PENDING",
-  APPROVED = "APPROVED",
-  REJECTED = "REJECTED",
-  INTERESTING = "INTERESTING",
+  APPROVED = "INTERESTING",
+  REJECTED = "IGNORED",
+  INTERESTING = "POTENTIAL",
+  COPY = "COPY",
 }
 
 export enum ProcessStatus {
