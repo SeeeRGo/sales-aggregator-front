@@ -10,8 +10,8 @@ interface Messages {
 }
 
 export const getMessageData = (): Promise<Messages> => {
-  if(process.env.API_URL) {
-    return axios(process.env.API_URL)
+  if(process.env.NEXT_PUBLIC_API_URL) {
+    return axios(process.env.NEXT_PUBLIC_API_URL)
       .then(({ data }) => ({
         lastHourMessages: data.lastHourMessages
           .sort((a: BaseMessage, b: BaseMessage) => b.date - a.date)
