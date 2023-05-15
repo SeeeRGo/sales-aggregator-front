@@ -1,11 +1,11 @@
 import { Link } from "@mui/material";
-import { IMessage, TextEntityType, TextEntityTypeTextUrl } from "./types";
+import { IMessage, TextEntityType } from "./types";
 
 export const parseEntities = (message: IMessage): (string | JSX.Element)[] => {
   if (!message.entities) return [message.text];
   const text = message.entities.reduceRight(
-    ([source, ...rest], { offset, length, type }, i) => {
-      const result = modifySubstring(source, offset, offset + length, type);
+    ([source, ...rest], { offset, length, className, url }, i) => {
+      const result = modifySubstring(source, offset, offset + length, className, url);
       const newRes = result.concat(rest);
       return newRes;
     },
@@ -19,24 +19,22 @@ const modifySubstring = (
   source: string | JSX.Element,
   start: number,
   end: number,
-  type: TextEntityType
+  type: TextEntityType,
+  url?: string,
 ) => {
   if (typeof source === 'string') {
     const preString = source.substring(0, start);
     const target = source.substring(start, end);
     const postString = source.substring(end);
-    const result = [preString, parseEntity(type, target), postString];
+    const result = [preString, parseEntity(type, target, url), postString];
     return result;
   }
   return [source];
 };
 
-const isTextUrl = (value: TextEntityType): value is TextEntityTypeTextUrl =>
-  typeof value === 'object' && 'url' in value;
-
-const parseEntity = (type: TextEntityType, content: string) => {
-  if (isTextUrl(type)) {
-    return <Link href={type.url}>{content}</Link>;
+const parseEntity = (type: TextEntityType, content: string, url?: string) => {
+  if (url) {
+    return <Link href={url}>{content}</Link>;
   }
   switch (type) {
     case 'MessageEntityBold':

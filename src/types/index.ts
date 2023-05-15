@@ -50,11 +50,8 @@ export type IChannelStats = Record<Category, IChannelSummary> & {
   name: React.ReactNode;
 };
 
-export type TextEntityTypeTextUrl = {
-  _: "textEntityTypeTextUrl";
-  /** HTTP or tg:// URL to be opened when the link is clicked */
-  url: string;
-};
+export type TextEntityTypeTextUrl = Required<TextEntity>
+
 export type TextEntityType =
   | "MessageEntityHashtag"
   | "MessageEntityUrl"
