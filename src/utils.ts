@@ -18,7 +18,9 @@ export const parseLoadedMessage = ({
   status,
   processed_at,
   deleted_at,
-}: LoadedMessage): IMessage => {
+}: LoadedMessage | {
+  [x: string]: any;
+}): IMessage => {
   return {
     date: message_date,
     text,

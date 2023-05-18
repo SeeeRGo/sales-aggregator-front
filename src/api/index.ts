@@ -1,6 +1,7 @@
-import { MessageStatus, ProcessStatus } from "@/constants";
-import { BaseMessage, IMessage } from "@/types";
-import axios from "axios";
+import { supabase } from "@/db";
+import { IMessage } from "@/types";
+import { parseLoadedMessage } from "@/utils";
+import dayjs from "dayjs";
 
 interface Messages {
   lastHourMessages: IMessage[];
@@ -9,45 +10,22 @@ interface Messages {
   olderMessages: IMessage[];
 }
 
-export const getMessageData = (): Promise<Messages> => {
-  if(process.env.NEXT_PUBLIC_API_URL) {
-    return axios(process.env.NEXT_PUBLIC_API_URL)
-      .then(({ data }) => ({
-        lastHourMessages: data.lastHourMessages
-          .sort((a: BaseMessage, b: BaseMessage) => b.date - a.date)
-          .map((message: BaseMessage) => ({
-            ...message,
-            status: MessageStatus.PENDING,
-            processStatus: ProcessStatus.PENDING,
-          })),
-        lastFourHourMessages: data.lastFourHourMessages
-          .sort((a: BaseMessage, b: BaseMessage) => b.date - a.date)
-          .map((message: BaseMessage) => ({
-            ...message,
-            status: MessageStatus.PENDING,
-            processStatus: ProcessStatus.PENDING,
-          })),
-        lastDayMessages: data.lastDayMessages
-          .sort((a: BaseMessage, b: BaseMessage) => b.date - a.date)
-          .map((message: BaseMessage) => ({
-            ...message,
-            status: MessageStatus.PENDING,
-            processStatus: ProcessStatus.PENDING,
-          })),
-        olderMessages: data.olderMessages
-          .sort((a: BaseMessage, b: BaseMessage) => b.date - a.date)
-          .map((message: BaseMessage) => ({
-            ...message,
-            status: MessageStatus.PENDING,
-            processStatus: ProcessStatus.PENDING,
-          })),
-      }))
-      .catch();
-  }
+
+export const getMessageData = async (): Promise<Messages> => {
+  const hourAgo = dayjs().add(-1, "hour").unix();
+  const fourHoursAgo = dayjs().add(-4, "hour").unix();
+  const dayAgo = dayjs().add(-1, "day").unix();
+  const monthAgo = dayjs().add(-1, "month").startOf("day").unix();
+
+  const { data: lastHourMessages } = await supabase.from('messages').select().gte('message_date', hourAgo)
+  const { data: lastFourHourMessages } = await supabase.from('messages').select().gte('message_date', fourHoursAgo).lte('message_date', hourAgo)
+  const { data: lastDayMessages } = await supabase.from('messages').select().gte('message_date', dayAgo).lte('message_date', fourHoursAgo)
+  const { data: olderMessages } = await supabase.from('messages').select().gte('message_date', monthAgo).lte('message_date', dayAgo)
+
   return Promise.resolve({
-    lastHourMessages: [],
-    lastFourHourMessages: [],
-    lastDayMessages: [],
-    olderMessages: [],
+    lastHourMessages: lastHourMessages?.map(parseLoadedMessage).sort((a: IMessage, b: IMessage) => b.date - a.date) ?? [],
+    lastFourHourMessages: lastFourHourMessages?.map(parseLoadedMessage).sort((a: IMessage, b: IMessage) => b.date - a.date) ?? [],
+    lastDayMessages: lastDayMessages?.map(parseLoadedMessage).sort((a: IMessage, b: IMessage) => b.date - a.date) ?? [],
+    olderMessages: olderMessages?.map(parseLoadedMessage).sort((a: IMessage, b: IMessage) => b.date - a.date) ?? [],
   })
 };
