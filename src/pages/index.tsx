@@ -32,7 +32,7 @@ export default function Home() {
       setLastDayMessages(lastDayMessages.filter(filter));
       setOlderMessages(olderMessages.filter(filter));
     })
-    const interval = setInterval(getMessageData, 10 * 60 * 1000);
+    const interval = setInterval(getMessageData, 5 * 60 * 1000);
     return () => clearInterval(interval);
   }, [messages]);
 
@@ -74,13 +74,13 @@ export default function Home() {
       </TabPanel>
       <TabPanel value={value} index={1}>
         <LoadedMessages
-          filter={({ deleted_at, processed_at }) => !!processed_at}
+          filter={({ processed_at }) => !!processed_at}
           processStatus={ProcessStatus.PROCESSED}
         />
       </TabPanel>
       <TabPanel value={value} index={2}>
         <LoadedMessages
-          filter={({ deleted_at, processed_at }) => !!deleted_at}
+          filter={({ deleted_at }) => !!deleted_at}
           processStatus={ProcessStatus.DELETED}
         />
       </TabPanel>
