@@ -24,10 +24,13 @@ export const FormattedMessage = ({ message, processStatus }: IProps) => {
   const [status, setStatus] = useState(message.status);
 
   const [process, setProcessStatus] = useState(processStatus);
-
+  // if(Math.random() < 0.001) {
+  //   console.log('parseEntities(message)', parseEntities(message)[0]);
+    
+  // }
   return (
     <Card>
-      <div style={{ display: "flex", flexDirection: "column" }}>
+      <div style={{ display: "flex", flexDirection: "column", padding: 12 }}>
         <div>{dayjs.unix(message.date).format("DD.MM.YYYY HH:mm:ss")} - {status}</div>
         <div>{message.chatName}</div>
         {message.link && (
@@ -58,22 +61,6 @@ export const FormattedMessage = ({ message, processStatus }: IProps) => {
               <Check color="success" />
             </IconButton>
           </StatusTooltip>
-          <StatusTooltip title="IGNORED">
-            <IconButton
-              onClick={async () => {
-                await supabase.from("messages").upsert({
-                  tg_message_id: message.messageId,
-                  tg_chat_name: message.chatName,
-                  message_date: message.date,
-                  text: message.text,
-                  status: MessageStatus.REJECTED,
-                });
-                return setStatus(MessageStatus.REJECTED);
-              }}
-            >
-              <Close color="error" />
-            </IconButton>
-          </StatusTooltip>
           <StatusTooltip title="POTENTIAL">
             <IconButton
               onClick={async () => {
@@ -88,6 +75,22 @@ export const FormattedMessage = ({ message, processStatus }: IProps) => {
               }}
             >
               <QuestionMark />
+            </IconButton>
+          </StatusTooltip>
+          <StatusTooltip title="IGNORED">
+            <IconButton
+              onClick={async () => {
+                await supabase.from("messages").upsert({
+                  tg_message_id: message.messageId,
+                  tg_chat_name: message.chatName,
+                  message_date: message.date,
+                  text: message.text,
+                  status: MessageStatus.REJECTED,
+                });
+                return setStatus(MessageStatus.REJECTED);
+              }}
+            >
+              <Close color="error" />
             </IconButton>
           </StatusTooltip>
           <StatusTooltip title="COPY">
