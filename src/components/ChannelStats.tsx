@@ -33,11 +33,7 @@ import {
   $olderMessages,
 } from "@/store/messages";
 
-interface IProps {
-  filter: (message: IMessage) => boolean;
-}
-
-export const ChannelStats = ({ filter }: IProps) => {
+export const ChannelStats = () => {
   const messages = useStore($messages);
 
   const lastHourMessages = useStore($lastHourMessages);
@@ -45,14 +41,18 @@ export const ChannelStats = ({ filter }: IProps) => {
   const lastDayMessages = useStore($lastDayMessages);
   const olderMessages = useStore($olderMessages);
 
-  const [loadedChannels, setLoadedChannels] = useState([]);
+  const [loadedChannels, setLoadedChannels] = useState<{ [x: string]: any; }[]>([]);
   console.log("loadedChannels", loadedChannels);
 
   useEffect(() => {
     supabase
       .from("distinct_chat")
       .select()
-      .then(({ data }) => setLoadedChannels(data));
+      .then(({ data }) => {
+        if (data) {
+          return setLoadedChannels(data);
+        }
+      });
   }, []);
 
   const channels = loadedChannels

@@ -9,11 +9,11 @@ interface IProps {
 }
 
 export function MasonryVerticalVirtualizerVariable({ rows }: IProps) {
-  const parentRef = React.useRef();
+  const parentRef = React.useRef(null);
 
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
-    getScrollElement: () => parentRef.current,
+    getScrollElement: () => parentRef?.current,
     estimateSize: (i) => 150,
     overscan: 5,
     lanes: 4,

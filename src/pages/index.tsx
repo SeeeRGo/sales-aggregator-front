@@ -1,14 +1,9 @@
 import { useEffect, useState } from "react";
-import { IMessage, LoadedMessage } from "@/types";
 import { Box, Tab, Tabs } from "@mui/material";
 import { TabPanel } from "@/components/TabPanel";
-import { CategoryMessages } from "@/components/CategoryMessages";
 import { LoadedMessages } from "@/components/LoadedMessages";
-import { supabase } from "@/db";
-import { MessageStatus, ProcessStatus } from "@/constants";
+import { MessageStatus } from "@/constants";
 import { ChannelStats } from "@/components/ChannelStats";
-import { isLoadedMessages } from "@/utils";
-import { getMessageData } from "@/api";
 import { InterestingMessages } from "@/components/InterestingMessages";
 import { fetchMessagesFx } from "@/effects/messages";
 
@@ -63,14 +58,7 @@ export default function Home() {
         />
       </TabPanel>
       <TabPanel value={value} index={5}>
-        <ChannelStats
-          filter={({ messageId }) => {
-            const message = messages.find(
-              ({ tg_message_id }) => messageId === tg_message_id
-            );
-            return !message?.deleted_at && !message?.processed_at;
-          }}
-        />
+        <ChannelStats />
       </TabPanel>
     </main>
   );

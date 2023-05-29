@@ -19,6 +19,7 @@ export interface LoadedMessage {
   tg_chat_name: string;
   text: string;
   link: string;
+  entities: TextEntity[];
   message_date: number;
   status: MessageStatus | null;
   deleted_at: string | null;
