@@ -4,7 +4,7 @@ import React from "react";
 export interface BaseMessage {
   date: number;
   text: string;
-  link?: string;
+  link: string;
   entities: TextEntity[];
   chatName: string;
   messageId: string;
@@ -18,6 +18,7 @@ export interface LoadedMessage {
   tg_message_id: string;
   tg_chat_name: string;
   text: string;
+  link: string;
   message_date: number;
   status: MessageStatus | null;
   deleted_at: string | null;

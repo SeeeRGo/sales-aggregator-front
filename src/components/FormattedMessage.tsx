@@ -11,27 +11,22 @@ import { Card, IconButton, Link, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import { supabase } from "../db";
 import React, { useState } from "react";
-import { MessageStatus, ProcessStatus } from "@/constants";
+import { MessageStatus } from "@/constants";
 import { StatusTooltip } from "./StatusButton";
 import { parseEntities } from "@/parseEntities";
 
 interface IProps {
   message: IMessage;
-  processStatus: ProcessStatus;
 }
 
-export const FormattedMessage = ({ message, processStatus }: IProps) => {
-  const [status, setStatus] = useState(message.status);
-
-  const [process, setProcessStatus] = useState(processStatus);
-  // if(Math.random() < 0.001) {
-  //   console.log('parseEntities(message)', parseEntities(message)[0]);
-    
-  // }
+export const FormattedMessage = ({ message }: IProps) => {
   return (
     <Card>
       <div style={{ display: "flex", flexDirection: "column", padding: 12 }}>
-        <div>{dayjs.unix(message.date).format("DD.MM.YYYY HH:mm:ss")} - {status}</div>
+        <div>
+          {dayjs.unix(message.date).format("DD.MM.YYYY HH:mm:ss")} -{" "}
+          {message.status}
+        </div>
         <div>{message.chatName}</div>
         {message.link && (
           <Link href={message.link}>Ссылка на оригинал сообщения</Link>
@@ -39,9 +34,7 @@ export const FormattedMessage = ({ message, processStatus }: IProps) => {
         <div className={`text-sm whitespace-pre-line`}>
           {parseEntities(message)}
         </div>
-        <div>
-          Статус обработки: {process}
-        </div>
+        <div>Статус обработки: {message.processStatus}</div>
       </div>
       <div className="flex justify-between flex-row">
         <div>
@@ -55,7 +48,6 @@ export const FormattedMessage = ({ message, processStatus }: IProps) => {
                   text: message.text,
                   status: MessageStatus.APPROVED,
                 });
-                return setStatus(MessageStatus.APPROVED);
               }}
             >
               <Check color="success" />
@@ -71,7 +63,6 @@ export const FormattedMessage = ({ message, processStatus }: IProps) => {
                   text: message.text,
                   status: MessageStatus.INTERESTING,
                 });
-                return setStatus(MessageStatus.INTERESTING);
               }}
             >
               <QuestionMark />
@@ -87,7 +78,6 @@ export const FormattedMessage = ({ message, processStatus }: IProps) => {
                   text: message.text,
                   status: MessageStatus.REJECTED,
                 });
-                return setStatus(MessageStatus.REJECTED);
               }}
             >
               <Close color="error" />
@@ -103,7 +93,6 @@ export const FormattedMessage = ({ message, processStatus }: IProps) => {
                   text: message.text,
                   status: MessageStatus.COPY,
                 });
-                return setStatus(MessageStatus.COPY);
               }}
             >
               <CopyAll color="warning" />
@@ -111,42 +100,24 @@ export const FormattedMessage = ({ message, processStatus }: IProps) => {
           </StatusTooltip>
         </div>
         <div>
-          <StatusTooltip title="Сообщение обработано. Нельзя поставить пока не установлен статус сообщения">
-            <IconButton
-              onClick={async () => {
-                if (status === MessageStatus.PENDING) return;
-                await supabase.from("messages").upsert({
-                  tg_message_id: message.messageId,
-                  tg_chat_name: message.chatName,
-                  message_date: message.date,
-                  text: message.text,
-                  processed_at: dayjs(),
-                  deleted_at: null,
-                });
-                return setProcessStatus(ProcessStatus.PROCESSED);
-              }}
-            >
-              <ArchiveOutlined color="primary" />
-            </IconButton>
-          </StatusTooltip>
-          <StatusTooltip title="Переместить сообщение в корзину. Нельзя поставить пока не установлен статус сообщения">
-            <IconButton
-              onClick={async () => {
-                if (status === MessageStatus.PENDING) return;
-                await supabase.from("messages").upsert({
-                  tg_message_id: message.messageId,
-                  tg_chat_name: message.chatName,
-                  message_date: message.date,
-                  text: message.text,
-                  deleted_at: dayjs(),
-                  processed_at: null,
-                });
-                return setProcessStatus(ProcessStatus.DELETED);
-              }}
-            >
-              <Delete color="secondary" />
-            </IconButton>
-          </StatusTooltip>
+          {message.status === MessageStatus.APPROVED && (
+            <StatusTooltip title="Сообщение обработано">
+              <IconButton
+                onClick={async () => {
+                  await supabase.from("messages").upsert({
+                    tg_message_id: message.messageId,
+                    tg_chat_name: message.chatName,
+                    message_date: message.date,
+                    text: message.text,
+                    processed_at: dayjs(),
+                    deleted_at: null,
+                  });
+                }}
+              >
+                <ArchiveOutlined color="primary" />
+              </IconButton>
+            </StatusTooltip>
+          )}
         </div>
       </div>
     </Card>

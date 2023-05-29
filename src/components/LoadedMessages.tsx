@@ -2,117 +2,42 @@ import { ProcessStatus } from "@/constants";
 import { supabase } from "@/db";
 import { IMessage, LoadedMessage } from "@/types";
 import { isLoadedMessages, parseLoadedMessage } from "@/utils";
-import { Chip, Divider, Typography } from "@mui/material";
+import { Chip, Divider, ListSubheader, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { MessageGrid } from "./MessageGrid";
+import { useStore } from "effector-react";
+import { $lastDayMessages, $lastFourHourMessages, $lastHourMessages, $olderMessages } from "@/store/messages";
+import { MessageSection } from "./MessagesSection";
 
 interface IProps {
-  filter: (message: LoadedMessage) => boolean;
-  processStatus: ProcessStatus;
+  filter: (message: IMessage) => boolean;
 }
 
-export const LoadedMessages = ({ filter, processStatus }: IProps) => {
-  const [lastHourMessages, setLastHourMessages] = useState<IMessage[]>([]);
-  const [lastFourHoursMessages, setLastFourHoursMessages] = useState<
-    IMessage[]
-  >([]);
-  const [lastDayMessages, setLastDayMessages] = useState<IMessage[]>([]);
-  const [olderMessages, setOlderMessages] = useState<IMessage[]>([]);
-  useEffect(() => {
-    const getData = () => {
-      supabase
-        .from("messages")
-        .select()
-        .then(({ data }) => {
-          const hourAgo = dayjs().add(-1, "hour").unix();
-          const fourHoursAgo = dayjs().add(-4, "hour").unix();
-          const dayAgo = dayjs().add(-1, "day").unix();
-          const monthAgo = dayjs().add(-1, "month").startOf("day").unix();
-          if (isLoadedMessages(data)) {
-            const lastHour = data
-              ?.filter(({ message_date }) => message_date > hourAgo)
-              .filter(filter)
-              .map(parseLoadedMessage)
-              .sort((a, b) => b.date - a.date);
-
-            if (lastHour) {
-              setLastHourMessages(lastHour);
-            }
-
-            const oneToFourHours = data
-              ?.filter(
-                ({ message_date }) =>
-                  message_date < hourAgo && message_date > fourHoursAgo
-              )
-              .filter(filter)
-              .map(parseLoadedMessage)
-              .sort((a, b) => b.date - a.date);
-
-            if (oneToFourHours) {
-              setLastFourHoursMessages(oneToFourHours);
-            }
-
-            const fourHoursToDay = data
-              ?.filter(
-                ({ message_date }) =>
-                  message_date < fourHoursAgo && message_date > dayAgo
-              )
-              .filter(filter)
-              .map(parseLoadedMessage)
-              .sort((a, b) => b.date - a.date);
-
-            if (fourHoursToDay) {
-              setLastDayMessages(fourHoursToDay);
-            }
-
-            const olderMessages = data
-              ?.filter(
-                ({ message_date }) =>
-                  message_date < dayAgo && message_date > monthAgo
-              )
-              .filter(filter)
-              .map(parseLoadedMessage)
-              .sort((a, b) => b.date - a.date);
-
-            if (olderMessages) {
-              setOlderMessages(olderMessages);
-            }
-          }
-        });
-    };
-    getData();
-    const interval = setInterval(getData, 180000);
-    return () => clearInterval(interval);
-  }, [filter]);
-
+export const LoadedMessages = ({ filter }: IProps) => {
+  const lastHourMessages = useStore($lastHourMessages);
+  const lastFourHoursMessages = useStore($lastFourHourMessages);
+  const lastDayMessages = useStore($lastDayMessages);
+  const olderMessages = useStore($olderMessages);
+  
   return (
-    <>
-      <Divider style={{ marginBottom: "12px" }}>
-        <Chip label="Сообщения за последний час" />
-      </Divider>
-      <MessageGrid
-        chatMessages={lastHourMessages}
-        processStatus={processStatus}
+    <div style={{ width: "100vw" }}>
+      <MessageSection
+        sectionLabel="За последний час"
+        messages={lastHourMessages.filter(filter)}
       />
-      <Divider style={{ marginBottom: "12px" }}>
-        <Chip label="Сообщения за последние 4 часа" />
-      </Divider>
-      <MessageGrid
-        chatMessages={lastFourHoursMessages}
-        processStatus={processStatus}
+      <MessageSection
+        sectionLabel="За последние 4 часа"
+        messages={lastFourHoursMessages.filter(filter)}
       />
-      <Divider style={{ marginBottom: "12px" }}>
-        <Chip label="Сообщения за последние 24 часа" />
-      </Divider>
-      <MessageGrid
-        chatMessages={lastDayMessages}
-        processStatus={processStatus}
+      <MessageSection
+        sectionLabel="За последние 24 часа"
+        messages={lastDayMessages.filter(filter)}
       />
-      <Divider style={{ marginBottom: "12px" }}>
-        <Chip label="Более старые сообщения" />
-      </Divider>
-      <MessageGrid chatMessages={olderMessages} processStatus={processStatus} />
-    </>
+      <MessageSection
+        sectionLabel="За последние 10 дней"
+        messages={olderMessages.filter(filter)}
+      />
+    </div>
   );
 };

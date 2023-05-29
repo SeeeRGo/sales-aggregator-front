@@ -24,98 +24,72 @@ import {
   parseLoadedMessage,
 } from "@/utils";
 import { channel } from "diagnostics_channel";
+import { useStore } from "effector-react";
+import {
+  $lastDayMessages,
+  $lastFourHourMessages,
+  $lastHourMessages,
+  $messages,
+  $olderMessages,
+} from "@/store/messages";
 
 interface IProps {
   filter: (message: IMessage) => boolean;
 }
 
 export const ChannelStats = ({ filter }: IProps) => {
-  const [messages, setMessages] = useState<LoadedMessage[]>([]);
+  const messages = useStore($messages);
+
+  const lastHourMessages = useStore($lastHourMessages);
+  const lastFourHoursMessages = useStore($lastFourHourMessages);
+  const lastDayMessages = useStore($lastDayMessages);
+  const olderMessages = useStore($olderMessages);
+
+  const [loadedChannels, setLoadedChannels] = useState([]);
+  console.log("loadedChannels", loadedChannels);
 
   useEffect(() => {
     supabase
-      .from("messages")
+      .from("distinct_chat")
       .select()
-      .then(({ data }) => {
-        if (isLoadedMessages(data)) {
-          setMessages(data);
-        }
-      });
+      .then(({ data }) => setLoadedChannels(data));
   }, []);
 
-  const [lastHourMessages, setLastHourMessages] = useState<IMessage[]>([]);
-  const [lastFourHoursMessages, setLastFourHoursMessages] = useState<
-    IMessage[]
-  >([]);
-  const [lastDayMessages, setLastDayMessages] = useState<IMessage[]>([]);
-  const [olderMessages, setOlderMessages] = useState<IMessage[]>([]);
-  useEffect(() => {
-    getMessageData().then(
-      ({
-        lastDayMessages,
-        lastFourHourMessages,
-        lastHourMessages,
-        olderMessages,
-      }) => {
-        setLastHourMessages(lastHourMessages.filter(filter));
-        setLastFourHoursMessages(lastFourHourMessages.filter(filter));
-        setLastDayMessages(lastDayMessages.filter(filter));
-        setOlderMessages(olderMessages.filter(filter));
-      }
-    );
-    const interval = setInterval(getMessageData, 180000);
-    return () => clearInterval(interval);
-  }, [filter]);
-
-  const messagesAll = lastHourMessages
-    .concat(lastFourHoursMessages)
-    .concat(lastDayMessages)
-    .concat(olderMessages)
-    .concat(messages.map(parseLoadedMessage));
-
-  const channels = Array.from(
-    new Set(messagesAll.map(({ chatName }) => chatName))
-  ).map(createEmptyChannelStats);
+  const channels = loadedChannels
+    .map(({ tg_chat_name }) => tg_chat_name)
+    .map(createEmptyChannelStats);
 
   const channelsObj = channels.reduce(
     (acc, channel) => ({
       ...acc,
-      [typeof channel.name === 'string' ? channel.name : 'summary channel']: channel,
+      [typeof channel.name === "string" ? channel.name : "summary channel"]:
+        channel,
     }),
     {} as Record<string, IChannelStats>
   );
 
-  const { lastDay, lastHour, older, lastFourHours } =
-    groupLoadedMessagesByCategory(messages);
-
   const updChannels = createUpdateChannelStatsWithMessageGroup(
-    lastDayMessages.concat(lastDay),
+    lastDayMessages,
     "lastDay"
   )(channelsObj);
 
   const updChannelsWithOlder = createUpdateChannelStatsWithMessageGroup(
-    olderMessages.concat(older),
+    olderMessages,
     "older"
   )(updChannels);
 
   const updChannelsWithLastHour = createUpdateChannelStatsWithMessageGroup(
-    lastHourMessages.concat(lastHour),
+    lastHourMessages,
     "lastHour"
   )(updChannelsWithOlder);
 
   const updChannelsWithLastFourHours = createUpdateChannelStatsWithMessageGroup(
-    lastFourHoursMessages.concat(lastFourHours),
+    lastFourHoursMessages,
     "lastFourHours"
   )(updChannelsWithLastHour);
-  const allMessagesAll = [
-    ...lastDayMessages.concat(lastDay),
-    ...olderMessages.concat(older),
-    ...lastHourMessages.concat(lastHour),
-    ...lastFourHoursMessages.concat(lastFourHours),
-  ];
 
   const updChannelsWithTotals = createUpdateChannelStatsWithMessageGroup(
-    allMessagesAll,
+    messages,
     "total"
   )(updChannelsWithLastFourHours);
 
@@ -123,7 +97,12 @@ export const ChannelStats = ({ filter }: IProps) => {
   const totalStats = channelsVals.reduce(
     (acc: IChannelStats, channel: IChannelStats) =>
       addChannelToStats(acc, channel),
-    createEmptyChannelStats(<>Общая статистика по каналам: <b style={{ fontSize: 20 }}>{channelsVals.length}</b></>) // Активных каналов в последний час, четыре часа, сутки, более старые
+    createEmptyChannelStats(
+      <>
+        Общая статистика по каналам:{" "}
+        <b style={{ fontSize: 20 }}>{channelsVals.length}</b>
+      </>
+    ) // Активных каналов в последний час, четыре часа, сутки, более старые
   );
 
   return (
