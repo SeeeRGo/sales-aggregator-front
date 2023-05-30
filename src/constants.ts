@@ -11,3 +11,4 @@ export enum ProcessStatus {
   PROCESSED = "PROCESSED",
   DELETED = "DELETED",
 }
+

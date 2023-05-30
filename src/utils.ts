@@ -266,3 +266,19 @@ export const orderMessagesInTimeWindow = (
   messages
     .filter(({ date }) => date > startTime && (!endTime || date < endTime))
     .sort((a: IMessage, b: IMessage) => b.date - a.date);
+
+export const getTimeWindowText = (dateToCompare: number) => {
+  const hourAgo = dayjs().add(-1, "hour").unix();
+  const fourHoursAgo = dayjs().add(-4, "hour").unix();
+  const dayAgo = dayjs().add(-1, "day").unix();
+  switch (true) {
+    case dateToCompare > hourAgo:
+      return "Сообщения за последний час";
+    case dateToCompare > fourHoursAgo:
+      return "Сообщения за последние 4 часа";
+    case dateToCompare > dayAgo:
+      return "Сообщения за последние 24 часа";
+    default:
+      return "Сообщения за последние 15 дней";
+  }
+};

@@ -5,7 +5,7 @@ import dayjs from "dayjs";
 import { createEffect, createEvent } from "effector";
 
 export const fetchMessagesFx = createEffect(async () => {
-  const monthAgo = dayjs().add(-1, "month").startOf("day").unix();
+  const monthAgo = dayjs().add(-15, "day").startOf("day").unix();
   const { data } = await supabase
       .from("messages")
       .select()

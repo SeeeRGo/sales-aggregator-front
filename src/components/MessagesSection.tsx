@@ -1,22 +1,23 @@
 import { IMessage } from '@/types'
 import { Chip, Divider, ListSubheader } from '@mui/material'
-import React from 'react'
+import React, { useState } from 'react'
 import { MessageGrid } from './MessageGrid'
+import { RowVirtualizerDynamic } from '@/playground/tanstackGrid'
 
 interface IProps {
   messages: IMessage[]
-  sectionLabel: string
 }
 
-export const MessageSection: React.FC<IProps> = ({ messages, sectionLabel }) => {
+export const MessageSection: React.FC<IProps> = ({ messages }) => {
+  const [sectionLabel, setSectionLabel] = useState("");
   return (
-    <>
-      <ListSubheader component={"div"}>
+    <div style={{ width: "95vw" }}>
+      <ListSubheader sx={{ top: 48, backgroundColor: "primary.light" }}>
         <Divider style={{ marginBottom: "12px" }}>
           <Chip label={sectionLabel} />
         </Divider>
       </ListSubheader>
-      <MessageGrid chatMessages={messages} />
-    </>
+      <RowVirtualizerDynamic rows={messages} headerText={sectionLabel} setHeaderText={setSectionLabel} />
+    </div>
   );
 }

@@ -1,17 +1,11 @@
-// import "./index.css";
 // import * as React from "react";
 // import { useVirtualizer, defaultRangeExtractor } from "@tanstack/react-virtual";
+// import { IMessage } from "@/types";
 
-// const groupedNames = groupBy(
-//   Array.from({ length: 1000 })
-//     .map(() => faker.name.firstName())
-//     .sort(),
-//   (name) => name[0]
-// );
-// const groups = Object.keys(groupedNames);
-// const rows = groups.reduce((acc, k) => [...acc, k, ...groupedNames[k]], []);
-
-// const App = () => {
+// interface IProps {
+//   rows: IMessage[]
+// }
+// export const Messages = ({ rows }: IProps) => {
 //   const parentRef = React.useRef(null);
 
 //   const activeStickyIndexRef = React.useRef(0);

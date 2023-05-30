@@ -5,13 +5,12 @@ import dayjs from "dayjs";
 import { createStore } from "effector";
 
 export const $messages = createStore<IMessage[]>([])
-.on(
-  fetchMessagesFx.doneData,
-  (_, messages) => messages
-)
-.on(updateMessage,
-  (state, message) => state.map(msg => msg.messageId === message.messageId ? message : msg)
+  .on(fetchMessagesFx.doneData, (_, messages) =>
+    messages.sort((a: IMessage, b: IMessage) => b.date - a.date)
   )
+  .on(updateMessage, (state, message) =>
+    state.map((msg) => (msg.messageId === message.messageId ? message : msg))
+  );
 
 export const $lastHourMessages = $messages.map((messages) => {
   const hourAgo = dayjs().add(-1, "hour").unix();
