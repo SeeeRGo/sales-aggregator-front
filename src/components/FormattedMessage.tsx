@@ -100,7 +100,7 @@ export const FormattedMessage = ({ message }: IProps) => {
           </StatusTooltip>
         </div>
         <div>
-          {message.status === MessageStatus.APPROVED && (
+          {message.status === MessageStatus.APPROVED || message.status === MessageStatus.INTERESTING && (
             <StatusTooltip title="Сообщение обработано">
               <IconButton
                 onClick={async () => {
