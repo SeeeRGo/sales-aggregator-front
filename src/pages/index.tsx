@@ -16,6 +16,10 @@ export default function Home() {
 
   useEffect(() => {
     fetchMessagesFx();
+    const interval = setInterval(() => {
+      fetchMessagesFx();
+    }, 5 * 60 * 1000)
+    return () => clearInterval(interval)
   }, []);
 
   return (

@@ -10,7 +10,7 @@ import {
 import { Card, IconButton, Link, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import { supabase } from "../db";
-import React, { useState } from "react";
+import React from "react";
 import { MessageStatus } from "@/constants";
 import { StatusTooltip } from "./StatusButton";
 import { parseEntities } from "@/parseEntities";
