@@ -4,7 +4,6 @@ import { defaultRangeExtractor, useVirtualizer } from "@tanstack/react-virtual";
 import { IMessage } from "@/types";
 import { FormattedMessage } from "@/components/FormattedMessage";
 import { Grid } from "@mui/material";
-import dayjs from "dayjs";
 import { getTimeWindowText } from "@/utils";
 
 interface IProps {
@@ -24,7 +23,6 @@ export function RowVirtualizerDynamic({ rows, headerText, setHeaderText }: IProp
     }
     return result;
   }, [rows]);
-  // console.log('slicedRows', slicedRows);
 
   const count = Math.floor(rows.length / 4) + 1;
   const virtualizer = useVirtualizer({

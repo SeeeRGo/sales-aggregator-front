@@ -7,7 +7,7 @@ import {
   Delete,
   QuestionMark,
 } from "@mui/icons-material";
-import { Card, IconButton, Link, Typography } from "@mui/material";
+import { Card, IconButton, Link } from "@mui/material";
 import dayjs from "dayjs";
 import { supabase } from "../db";
 import React from "react";
