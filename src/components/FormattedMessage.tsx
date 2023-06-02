@@ -20,6 +20,7 @@ interface IProps {
 }
 
 export const FormattedMessage = ({ message }: IProps) => {
+  const isProcessable = message.status === MessageStatus.APPROVED || message.status === MessageStatus.INTERESTING
   return (
     <Card>
       <div style={{ display: "flex", flexDirection: "column", padding: 12 }}>
@@ -100,7 +101,7 @@ export const FormattedMessage = ({ message }: IProps) => {
           </StatusTooltip>
         </div>
         <div>
-          {message.status === MessageStatus.APPROVED || message.status === MessageStatus.INTERESTING && (
+          {isProcessable ? (
             <StatusTooltip title="Сообщение обработано">
               <IconButton
                 onClick={async () => {
@@ -117,7 +118,7 @@ export const FormattedMessage = ({ message }: IProps) => {
                 <ArchiveOutlined color="primary" />
               </IconButton>
             </StatusTooltip>
-          )}
+          ) : null}
         </div>
       </div>
     </Card>
