@@ -3,7 +3,7 @@ import TableCell from "@mui/material/TableCell";
 import TableRow from "@mui/material/TableRow";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
-import { Collapse, IconButton, TableBody } from '@mui/material';
+import { IconButton } from '@mui/material';
 import { IChannelStats } from '@/types';
 import { ChannelRow } from './ChannelRow';
 

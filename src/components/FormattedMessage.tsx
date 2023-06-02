@@ -4,7 +4,6 @@ import {
   Check,
   Close,
   CopyAll,
-  Delete,
   QuestionMark,
 } from "@mui/icons-material";
 import { Card, IconButton, Link } from "@mui/material";

@@ -2,26 +2,16 @@ import React, { useEffect, useState } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
 import { ChannelSummary } from "./ChannelSummary";
-import { supabase } from "@/db";
-import { getMessageData } from "@/api";
 import {
   IChannelStats,
-  IChannelSummary,
-  IMessage,
-  LoadedMessage,
 } from "@/types";
 import {
   addChannelToStats,
   createEmptyChannelStats,
   createUpdateChannelStatsWithMessageGroup,
-  groupLoadedMessagesByCategory,
-  isLoadedMessages,
-  parseLoadedMessage,
 } from "@/utils";
 import { channel } from "diagnostics_channel";
 import { useStore } from "effector-react";
@@ -32,6 +22,7 @@ import {
   $messages,
   $olderMessages,
 } from "@/store/messages";
+import axios from "axios";
 
 export const ChannelStats = () => {
   const messages = useStore($messages);
@@ -42,21 +33,13 @@ export const ChannelStats = () => {
   const olderMessages = useStore($olderMessages);
 
   const [loadedChannels, setLoadedChannels] = useState<{ [x: string]: any; }[]>([]);
-  console.log("loadedChannels", loadedChannels);
 
   useEffect(() => {
-    supabase
-      .from("distinct_chat")
-      .select()
-      .then(({ data }) => {
-        if (data) {
-          return setLoadedChannels(data);
-        }
-      });
+    axios.get('http://192.168.63.178:5000/chats').then(({ data }) => setLoadedChannels(data))
   }, []);
 
   const channels = loadedChannels
-    .map(({ tg_chat_name }) => tg_chat_name)
+    .map(({ name }) => name)
     .map(createEmptyChannelStats);
 
   const channelsObj = channels.reduce(
@@ -106,8 +89,8 @@ export const ChannelStats = () => {
   );
 
   return (
-    <Table stickyHeader sx={{ minWidth: 650, maxHeight: "calc(100vh - 72px)" }}>
-      <TableHead>
+    <Table sx={{ minWidth: 650, maxHeight: "calc(100vh - 72px)" }}>
+      <TableHead sx={{ position: "sticky", top: 48, backgroundColor: 'white', zIndex: 100, }}>
         <TableRow>
           <TableCell />
           <TableCell>Название канала</TableCell>

@@ -11,8 +11,8 @@ interface IProps {
 export const MessageSection: React.FC<IProps> = ({ messages }) => {
   const [sectionLabel, setSectionLabel] = useState("");
   return (
-    <div style={{ width: "95vw" }}>
-      <ListSubheader sx={{ top: 48, backgroundColor: "primary.light" }}>
+    <div style={{ width: "98vw" }}>
+      <ListSubheader sx={{ top: 48, backgroundColor: 'transparent' }}>
         <Divider style={{ marginBottom: "12px" }}>
           <Chip label={sectionLabel} />
         </Divider>

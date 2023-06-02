@@ -28,8 +28,13 @@ export default function Home() {
         sx={{
           borderBottom: 1,
           borderColor: "divider",
+          display: 'flex',
           position: "sticky",
           top: 0,
+          left: 0,
+          right: 0,
+          width: '100%',
+          justifyContent: 'center',
           zIndex: 100,
           backgroundColor: "rgb(214, 219, 220)",
         }}
