@@ -105,7 +105,9 @@ export const ChannelStats = () => {
       </TableHead>
       <TableBody>
         <ChannelSummary channel={totalStats} />
-        {channelsVals.map((channel, i: number) => {
+        {channelsVals
+          .sort((a, b) => b.total.totalMessages - a.total.totalMessages)
+          .map((channel, i: number) => {
           return <ChannelSummary channel={channel as IChannelStats} key={i} />;
         })}
       </TableBody>
