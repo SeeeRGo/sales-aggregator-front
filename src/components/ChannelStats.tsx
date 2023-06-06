@@ -96,11 +96,11 @@ export const ChannelStats = () => {
           <TableCell>Название канала</TableCell>
           <TableCell align="right">Период</TableCell>
           <TableCell align="right">Всего сообщений</TableCell>
-          <TableCell align="right">Интересные сообщения</TableCell>
+          <TableCell align="right">Интересные</TableCell>
           <TableCell align="right">Потенциально интересные</TableCell>
-          <TableCell align="right">Неинтересные сообщения</TableCell>
-          <TableCell align="right">Обработанные сообщения</TableCell>
-          <TableCell align="right">Удаленные сообщения</TableCell>
+          <TableCell align="right">Игнор</TableCell>
+          <TableCell align="right">Дублированные</TableCell>
+          <TableCell align="right">Обработанные</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>

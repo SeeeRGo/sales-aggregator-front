@@ -37,7 +37,7 @@ export interface IChannelSummary {
   category: Category;
   totalMessages: number;
   processedMessages: number;
-  deletedMessages: number;
+  duplicateMessages: number;
   interestingMessages: number;
   uninterestingMessages: number;
   potentiallyMessages: number;

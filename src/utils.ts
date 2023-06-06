@@ -50,10 +50,10 @@ export const createUpdateChannelStatsFromMessage =
       processStatus === ProcessStatus.PROCESSED
         ? prevSummary.processedMessages + 1
         : prevSummary.processedMessages,
-    deletedMessages:
-      processStatus === ProcessStatus.DELETED
-        ? prevSummary.deletedMessages + 1
-        : prevSummary.deletedMessages,
+    duplicateMessages:
+      status === MessageStatus.COPY
+        ? prevSummary.duplicateMessages + 1
+        : prevSummary.duplicateMessages,
     interestingMessages:
       status === MessageStatus.APPROVED
         ? prevSummary.interestingMessages + 1
@@ -126,7 +126,7 @@ export const createEmptyChannelStats = (
     category: "total",
     totalMessages: 0,
     processedMessages: 0,
-    deletedMessages: 0,
+    duplicateMessages: 0,
     interestingMessages: 0,
     uninterestingMessages: 0,
     potentiallyMessages: 0,
@@ -135,7 +135,7 @@ export const createEmptyChannelStats = (
     category: "lastHour",
     totalMessages: 0,
     processedMessages: 0,
-    deletedMessages: 0,
+    duplicateMessages: 0,
     interestingMessages: 0,
     uninterestingMessages: 0,
     potentiallyMessages: 0,
@@ -144,7 +144,7 @@ export const createEmptyChannelStats = (
     category: "lastFourHours",
     totalMessages: 0,
     processedMessages: 0,
-    deletedMessages: 0,
+    duplicateMessages: 0,
     interestingMessages: 0,
     uninterestingMessages: 0,
     potentiallyMessages: 0,
@@ -153,7 +153,7 @@ export const createEmptyChannelStats = (
     category: "lastDay",
     totalMessages: 0,
     processedMessages: 0,
-    deletedMessages: 0,
+    duplicateMessages: 0,
     interestingMessages: 0,
     uninterestingMessages: 0,
     potentiallyMessages: 0,
@@ -162,7 +162,7 @@ export const createEmptyChannelStats = (
     category: "older",
     totalMessages: 0,
     processedMessages: 0,
-    deletedMessages: 0,
+    duplicateMessages: 0,
     interestingMessages: 0,
     uninterestingMessages: 0,
     potentiallyMessages: 0,
@@ -180,7 +180,7 @@ export const addChannelToStats = (
       totalMessages: total.totalMessages + channel.total.totalMessages,
       processedMessages:
         total.processedMessages + channel.total.processedMessages,
-      deletedMessages: total.deletedMessages + channel.total.deletedMessages,
+      duplicateMessages: total.duplicateMessages + channel.total.duplicateMessages,
       interestingMessages:
         total.interestingMessages + channel.total.interestingMessages,
       uninterestingMessages:
@@ -193,8 +193,8 @@ export const addChannelToStats = (
       totalMessages: lastHour.totalMessages + channel.lastHour.totalMessages,
       processedMessages:
         lastHour.processedMessages + channel.lastHour.processedMessages,
-      deletedMessages:
-        lastHour.deletedMessages + channel.lastHour.deletedMessages,
+      duplicateMessages:
+        lastHour.duplicateMessages + channel.lastHour.duplicateMessages,
       interestingMessages:
         lastHour.interestingMessages + channel.lastHour.interestingMessages,
       uninterestingMessages:
@@ -209,8 +209,8 @@ export const addChannelToStats = (
       processedMessages:
         lastFourHours.processedMessages +
         channel.lastFourHours.processedMessages,
-      deletedMessages:
-        lastFourHours.deletedMessages + channel.lastFourHours.deletedMessages,
+      duplicateMessages:
+        lastFourHours.duplicateMessages + channel.lastFourHours.duplicateMessages,
       interestingMessages:
         lastFourHours.interestingMessages +
         channel.lastFourHours.interestingMessages,
@@ -226,8 +226,8 @@ export const addChannelToStats = (
       totalMessages: lastDay.totalMessages + channel.lastDay.totalMessages,
       processedMessages:
         lastDay.processedMessages + channel.lastDay.processedMessages,
-      deletedMessages:
-        lastDay.deletedMessages + channel.lastDay.deletedMessages,
+      duplicateMessages:
+        lastDay.duplicateMessages + channel.lastDay.duplicateMessages,
       interestingMessages:
         lastDay.interestingMessages + channel.lastDay.interestingMessages,
       uninterestingMessages:
@@ -240,7 +240,7 @@ export const addChannelToStats = (
       totalMessages: older.totalMessages + channel.older.totalMessages,
       processedMessages:
         older.processedMessages + channel.older.processedMessages,
-      deletedMessages: older.deletedMessages + channel.older.deletedMessages,
+      duplicateMessages: older.duplicateMessages + channel.older.duplicateMessages,
       interestingMessages:
         older.interestingMessages + channel.older.interestingMessages,
       uninterestingMessages:

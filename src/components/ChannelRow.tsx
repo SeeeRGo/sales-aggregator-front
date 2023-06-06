@@ -15,7 +15,7 @@ export const ChannelRow = ({ channel }: IProps) => {
       <TableCell align="right">{channel.potentiallyMessages}</TableCell>
       <TableCell align="right">{channel.uninterestingMessages}</TableCell>
       <TableCell align="right">{channel.processedMessages}</TableCell>
-      <TableCell align="right">{channel.deletedMessages}</TableCell>
+      <TableCell align="right">{channel.duplicateMessages}</TableCell>
     </>
   );
 };

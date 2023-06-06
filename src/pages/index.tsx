@@ -63,13 +63,13 @@ export default function Home() {
       </TabPanel>
       <TabPanel value={value} index={2}>
         <LoadedMessages
-          filter={({ status }) => status === MessageStatus.INTERESTING}
+          filter={({ status, processStatus }) => status === MessageStatus.INTERESTING &&
+          processStatus === ProcessStatus.PENDING}
         />
       </TabPanel>
       <TabPanel value={value} index={3}>
         <LoadedMessages
-          filter={({ status, processStatus }) =>
-            status === MessageStatus.APPROVED &&
+          filter={({ processStatus }) =>
             processStatus === ProcessStatus.PROCESSED
           }
         />
