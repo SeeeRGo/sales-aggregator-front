@@ -1,7 +1,6 @@
 import { IMessage } from '@/types'
 import { Chip, Divider, ListSubheader } from '@mui/material'
 import React, { useState } from 'react'
-import { MessageGrid } from './MessageGrid'
 import { RowVirtualizerDynamic } from '@/playground/tanstackGrid'
 
 interface IProps {

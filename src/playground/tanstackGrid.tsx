@@ -85,7 +85,7 @@ export function RowVirtualizerDynamic({ rows, headerText, setHeaderText }: IProp
                       {slicedRows[virtualRow.index].map((message, i) =>
                         {
                           return (
-                            <Grid item xs={3} key={i}>
+                            <Grid item xs={12} sm={6} md={3} key={i}>
                               <FormattedMessage message={message} />
                             </Grid>
                           );

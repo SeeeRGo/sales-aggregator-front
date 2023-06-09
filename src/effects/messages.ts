@@ -15,3 +15,4 @@ export const fetchMessagesFx = createEffect(async () => {
 })
 
 export const updateMessage = createEvent<IMessage>()
+export const insertMessage = createEvent<IMessage>()

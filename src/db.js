@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { updateMessage } from "./effects/messages";
+import { insertMessage, updateMessage } from "./effects/messages";
 import { parseLoadedMessage } from "./utils";
 
 // Create a single supabase client for interacting with your database
@@ -19,4 +19,11 @@ export const channel = supabase
     },
     (payload) => updateMessage(parseLoadedMessage(payload.new))
   )
+  .on('postgres_changes',
+  {
+    event: 'INSERT',
+    schema: 'public',
+    table: 'messages',
+  },
+  (payload) => insertMessage(parseLoadedMessage(payload.new)))
   .subscribe()

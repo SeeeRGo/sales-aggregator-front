@@ -10,16 +10,12 @@ import { fetchMessagesFx } from "@/effects/messages";
 export default function Home() {
   const [value, setValue] = useState(0);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (_: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
 
   useEffect(() => {
     fetchMessagesFx();
-    const interval = setInterval(() => {
-      fetchMessagesFx();
-    }, 5 * 60 * 1000)
-    return () => clearInterval(interval)
   }, []);
 
   return (

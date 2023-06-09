@@ -1,4 +1,4 @@
-import { fetchMessagesFx, updateMessage } from "@/effects/messages";
+import { fetchMessagesFx, insertMessage, updateMessage } from "@/effects/messages";
 import { IMessage } from "@/types";
 import { orderMessagesInTimeWindow } from "@/utils";
 import dayjs from "dayjs";
@@ -10,6 +10,9 @@ export const $messages = createStore<IMessage[]>([])
   )
   .on(updateMessage, (state, message) =>
     state.map((msg) => (msg.messageId === message.messageId ? message : msg))
+  )
+  .on(insertMessage, (state, message) =>
+    state.concat([message]).sort((a: IMessage, b: IMessage) => b.date - a.date)
   );
 
 export const $lastHourMessages = $messages.map((messages) => {
