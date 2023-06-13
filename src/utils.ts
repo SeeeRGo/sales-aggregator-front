@@ -1,14 +1,16 @@
 import dayjs from "dayjs";
 import React from "react";
-import { MessageStatus, ProcessStatus } from "./constants";
+import { MessageStatus, ProcessStatus, channelsSheetKeys, channelsSheetValues } from "./constants";
 import {
   IChannelStats,
   IChannelSummary,
   IMessage,
   LoadedMessage,
+  TgChannel,
   UpdateChannelStats,
   UpdateChannelSummary,
 } from "./types";
+import { supabase } from "./db";
 
 export const parseLoadedMessage = ({
   tg_chat_name,
@@ -19,12 +21,9 @@ export const parseLoadedMessage = ({
   tg_message_id,
   status,
   processed_at,
-  deleted_at,
-}:
-  | LoadedMessage
-  | {
-      [x: string]: any;
-    }): IMessage => {
+}: {
+    [x: string]: any;
+  }): IMessage => {
   return {
     date: message_date,
     text,
@@ -35,8 +34,6 @@ export const parseLoadedMessage = ({
     status: status || MessageStatus.PENDING,
     processStatus: processed_at
       ? ProcessStatus.PROCESSED
-      : deleted_at
-      ? ProcessStatus.DELETED
       : ProcessStatus.PENDING,
   };
 };
@@ -282,3 +279,17 @@ export const getTimeWindowText = (dateToCompare: number) => {
       return "Сообщения за последние 15 дней";
   }
 };
+
+export const parseChannel = ({
+  channelName,
+  channelType,
+  id,
+  rating,
+}: {
+  [x: string]: any;
+}): TgChannel => ({
+  id,
+  channelName,
+  channelType,
+  rating: typeof rating === 'number' ? `${rating}` : "",
+});

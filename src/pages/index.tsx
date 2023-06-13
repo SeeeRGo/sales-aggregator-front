@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
-import { Box, Tab, Tabs } from "@mui/material";
+import { Box, Fab, Tab, Tabs } from "@mui/material";
 import { TabPanel } from "@/components/TabPanel";
 import { LoadedMessages } from "@/components/LoadedMessages";
 import { MessageStatus, ProcessStatus } from "@/constants";
 import { ChannelStats } from "@/components/ChannelStats";
 import { InterestingMessages } from "@/components/InterestingMessages";
 import { fetchMessagesFx } from "@/effects/messages";
+import Link from "next/link";
+import { Add } from "@mui/icons-material";
+import AddChannelForm from "@/components/AddChannelForm";
 
 export default function Home() {
   const [value, setValue] = useState(0);
@@ -20,21 +23,23 @@ export default function Home() {
 
   return (
     <main className={`flex flex-col items-center justify-between`}>
+      <AddChannelForm />
       <Box
         sx={{
           borderBottom: 1,
           borderColor: "divider",
-          display: 'flex',
+          display: "flex",
           position: "sticky",
           top: 0,
           left: 0,
           right: 0,
-          width: '100%',
-          justifyContent: 'center',
+          width: "100%",
+          justifyContent: "space-around",
           zIndex: 100,
           backgroundColor: "rgb(214, 219, 220)",
         }}
       >
+        <Link href="/channels">Каналы</Link>
         <Tabs
           value={value}
           onChange={handleChange}
@@ -59,8 +64,10 @@ export default function Home() {
       </TabPanel>
       <TabPanel value={value} index={2}>
         <LoadedMessages
-          filter={({ status, processStatus }) => status === MessageStatus.INTERESTING &&
-          processStatus === ProcessStatus.PENDING}
+          filter={({ status, processStatus }) =>
+            status === MessageStatus.INTERESTING &&
+            processStatus === ProcessStatus.PENDING
+          }
         />
       </TabPanel>
       <TabPanel value={value} index={3}>

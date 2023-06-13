@@ -72,3 +72,12 @@ export interface TextEntity {
   className: TextEntityType;
   url?: string
 }
+
+export type ChannelType = 'CHAT' | 'CHANNEL' | 'BOT'
+
+export interface TgChannel {
+  id: number;
+  rating: string;
+  channelType: ChannelType;
+  channelName: string;
+}
