@@ -22,7 +22,6 @@ export interface LoadedMessage {
   entities: TextEntity[];
   message_date: number;
   status: MessageStatus | null;
-  deleted_at: string | null;
   processed_at: string | null;
 }
 

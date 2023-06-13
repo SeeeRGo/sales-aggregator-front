@@ -10,7 +10,6 @@ import {
   UpdateChannelStats,
   UpdateChannelSummary,
 } from "./types";
-import { supabase } from "./db";
 
 export const parseLoadedMessage = ({
   tg_chat_name,

@@ -110,7 +110,6 @@ export const FormattedMessage = ({ message }: IProps) => {
                     message_date: message.date,
                     text: message.text,
                     processed_at: dayjs(),
-                    deleted_at: null,
                   });
                 }}
               >
