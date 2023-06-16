@@ -72,11 +72,15 @@ export interface TextEntity {
   url?: string
 }
 
-export type ChannelType = 'CHAT' | 'CHANNEL' | 'BOT'
+export type ChannelType = 'СHAT' | 'CHANNEL' | 'BOT'
+export type SortingDirection = 'asc' | 'desc' | 'none'
+export type ChannelTypeFilter = ChannelType | 'ALL'
 
 export interface TgChannel {
   id: number;
   rating: string;
+  comment: string;
+  link: string;
   channelType: ChannelType;
   channelName: string;
 }

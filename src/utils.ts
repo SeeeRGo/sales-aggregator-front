@@ -283,12 +283,16 @@ export const parseChannel = ({
   channelName,
   channelType,
   id,
+  comment,
+  channelLink,
   rating,
 }: {
   [x: string]: any;
 }): TgChannel => ({
   id,
   channelName,
+  link: channelLink,
+  comment,
   channelType,
   rating: typeof rating === 'number' ? `${rating}` : "",
 });
