@@ -81,6 +81,7 @@ export interface TgChannel {
   rating: string;
   comment: string;
   link: string;
+  isTracked: boolean;
   channelType: ChannelType;
   channelName: string;
 }

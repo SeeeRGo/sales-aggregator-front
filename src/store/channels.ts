@@ -11,6 +11,8 @@ export const $filteredChannels = createStore<TgChannel[]>([]).on(
   (_, channels) => channels
 );
 
+export const $trackedChannels = $channels.map(channels => channels.filter(({ isTracked }) => isTracked))
+
 export const $channelModificators = createStore<{
   filter: ChannelTypeFilter,
   ratingSort: SortingDirection,

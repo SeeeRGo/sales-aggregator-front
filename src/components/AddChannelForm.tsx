@@ -4,7 +4,7 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { Fab, FormControlLabel, Stack, Switch, TextField } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import { supabase } from "@/db";
+import axios from "axios";
 
 export default function AddChannelForm() {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -53,8 +53,9 @@ export default function AddChannelForm() {
           />
           <Button
             onClick={async () => {
-              await supabase.from("channels").insert({
-                channelName,
+              await axios.post('http://192.168.63.178:5000/add', {
+                chat_name: channelName,
+                should_track: false,
               });
               setChannelName("");
               handleClose();

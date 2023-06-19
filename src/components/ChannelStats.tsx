@@ -13,7 +13,6 @@ import {
   createEmptyChannelStats,
   createUpdateChannelStatsWithMessageGroup,
 } from "@/utils";
-import { channel } from "diagnostics_channel";
 import { useStore } from "effector-react";
 import {
   $lastDayMessages,
@@ -22,24 +21,25 @@ import {
   $messages,
   $olderMessages,
 } from "@/store/messages";
-import axios from "axios";
+import { fetchChannelsFx } from "@/effects/channels";
+import { $trackedChannels } from "@/store/channels";
 
 export const ChannelStats = () => {
   const messages = useStore($messages);
+  const loadedChannels = useStore($trackedChannels)
 
   const lastHourMessages = useStore($lastHourMessages);
   const lastFourHoursMessages = useStore($lastFourHourMessages);
   const lastDayMessages = useStore($lastDayMessages);
   const olderMessages = useStore($olderMessages);
 
-  const [loadedChannels, setLoadedChannels] = useState<{ [x: string]: any; }[]>([]);
 
   useEffect(() => {
-    axios.get('http://192.168.63.178:5000/chats').then(({ data }) => setLoadedChannels(data))
+    fetchChannelsFx()
   }, []);
 
   const channels = loadedChannels
-    .map(({ name }) => name)
+    .map(({ channelName }) => channelName)
     .map(createEmptyChannelStats);
 
   const channelsObj = channels.reduce(

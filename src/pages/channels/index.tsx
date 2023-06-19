@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import { CHANNEL_TYPE_STRINGS } from "@/constants";
 import { ChannelTypeFilter } from "@/types";
 import Link from "next/link";
-import { ArrowDownward, ArrowUpward } from "@mui/icons-material";
+import { ArrowDownward, ArrowUpward, Check, DoDisturbOn, Error } from "@mui/icons-material";
 
 export default function Channels() {
   const channels = useStore($filteredChannels)
@@ -43,6 +43,7 @@ export default function Channels() {
         >
           <TableRow>
             <TableCell>Название канала</TableCell>
+            <TableCell>В агрегаторе</TableCell>
             <TableCell onClick={() => {
               if(channelTypeSort === 'none') {
                 setChannelTypeSorting('asc')
@@ -66,12 +67,13 @@ export default function Channels() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {channels.map(({ id, channelName, channelType, rating, link, comment }) => (
+          {channels.map(({ id, channelName, channelType, rating, link, isTracked, comment }) => (
             <TableRow key={id} onClick={(e) => {
               e.stopPropagation()
               router.push(`channels/${id}`);
             }}>
               <TableCell>{channelName}</TableCell>
+              <TableCell>{isTracked ? <Check color="success" /> : <DoDisturbOn color="error" />}</TableCell>
               <TableCell>{CHANNEL_TYPE_STRINGS[channelType]}</TableCell>
               <TableCell>{rating}</TableCell>
               <TableCell><Link href={link}>{link}</Link></TableCell>

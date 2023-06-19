@@ -284,6 +284,7 @@ export const parseChannel = ({
   channelType,
   id,
   comment,
+  isTracked,
   channelLink,
   rating,
 }: {
@@ -293,6 +294,7 @@ export const parseChannel = ({
   channelName,
   link: channelLink,
   comment,
+  isTracked: !!isTracked,
   channelType,
   rating: typeof rating === 'number' ? `${rating}` : "",
 });
