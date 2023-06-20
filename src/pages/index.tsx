@@ -7,7 +7,6 @@ import { ChannelStats } from "@/components/ChannelStats";
 import { InterestingMessages } from "@/components/InterestingMessages";
 import { fetchMessagesFx } from "@/effects/messages";
 import Link from "next/link";
-import { Add } from "@mui/icons-material";
 import AddChannelForm from "@/components/AddChannelForm";
 
 export default function Home() {

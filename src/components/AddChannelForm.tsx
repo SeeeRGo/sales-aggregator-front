@@ -9,6 +9,7 @@ import axios from "axios";
 export default function AddChannelForm() {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [channelName, setChannelName] = useState("");
+  const [shouldTrack, setShouldTrack] = useState(false)
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -48,16 +49,23 @@ export default function AddChannelForm() {
             variant="standard"
           />
           <FormControlLabel
-            control={<Switch value={false} disabled />}
+            control={<Switch checked={shouldTrack} onClick={() => setShouldTrack(!shouldTrack)} />}
             label="Добавить в агрегатор"
           />
           <Button
             onClick={async () => {
-              await axios.post('http://192.168.63.178:5000/add', {
+              await axios.post('http://192.168.63.178:5000/add', JSON.stringify({
                 chat_name: channelName,
-                should_track: false,
-              });
+                should_track: shouldTrack,
+              }),
+              {
+                headers: {
+                'Content-Type': 'application/json'
+                }
+                }
+              );
               setChannelName("");
+              setShouldTrack(false);
               handleClose();
             }}
           >
