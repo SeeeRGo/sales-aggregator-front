@@ -1,4 +1,4 @@
-import { Box, Modal, Typography } from '@mui/material';
+import { Box, Modal, Stack, Typography } from '@mui/material';
 import React from 'react'
 
 const modalStyle = {
@@ -28,7 +28,10 @@ export const DuplicateMessages: React.FC<IProps> = ({ open, handleClose, childre
       aria-describedby="modal-modal-description"
     >
       <Box sx={modalStyle}>
-        {children}
+        <Stack alignItems='center'>
+          <Typography variant='h6'>Найдены потенциальные копии</Typography>
+          {children}
+        </Stack>
       </Box>
     </Modal>
   )

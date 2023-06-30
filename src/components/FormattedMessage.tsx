@@ -149,11 +149,11 @@ export const FormattedMessage = ({ message, ignoreDuplicates, onStatusChange }: 
         {copyMessages ? (
           <Stack direction='row' columnGap={2}>
             <Stack rowGap={1}>
-              <Typography variant="h6">Сообщение на рассмотрении</Typography>
+              <Typography variant="subtitle1">Сообщение на рассмотрении</Typography>
               <FormattedMessage message={message} ignoreDuplicates onStatusChange={() => setOpen(false)} />
             </Stack>
             <Stack rowGap={1}>
-              <Typography variant="h6">Потенциальные копии</Typography>
+              <Typography variant="subtitle1">Потенциальные копии</Typography>
               {copyMessages.map((msg, i) => (
                 <FormattedMessage key={i} message={parseLoadedMessage(msg)} ignoreDuplicates onStatusChange={() => setOpen(false)} />
               ))}
