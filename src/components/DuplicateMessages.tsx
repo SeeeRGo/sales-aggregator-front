@@ -28,7 +28,7 @@ export const DuplicateMessages: React.FC<IProps> = ({ open, handleClose, childre
       aria-describedby="modal-modal-description"
     >
       <Box sx={modalStyle}>
-        <Stack alignItems='center'>
+        <Stack rowGap={1} alignItems='center'>
           <Typography variant='h6'>Найдены потенциальные копии</Typography>
           {children}
         </Stack>
