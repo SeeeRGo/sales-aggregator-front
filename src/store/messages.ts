@@ -1,5 +1,14 @@
-import { fetchMessagesFx, insertMessage, updateMessage } from "@/effects/messages";
-import { fetchSearchResultsFx, resetSearchResults, setSearchQuery } from "@/effects/search";
+import { ProcessStatus } from "@/constants";
+import {
+  fetchMessagesFx,
+  insertMessage,
+  updateMessage,
+} from "@/effects/messages";
+import {
+  fetchSearchResultsFx,
+  resetSearchResults,
+  setSearchQuery,
+} from "@/effects/search";
 import { IMessage } from "@/types";
 import { orderMessagesInTimeWindow } from "@/utils";
 import dayjs from "dayjs";
@@ -42,8 +51,31 @@ export const $olderMessages = $messages.map((messages) => {
   return orderMessagesInTimeWindow(messages, tenDaysAgo, dayAgo);
 });
 
-export const $searchResults = createStore<IMessage[]>([])
-  .on(fetchSearchResultsFx.doneData, (_, messages) => messages.sort((a: IMessage, b: IMessage) => b.date - a.date))
-  .on(resetSearchResults, () => [])
+export const $downloadableMessages = $messages.map((messages) => {
+  const dayAgo = dayjs().add(-1, "day").unix();
+  const orderedMessages = orderMessagesInTimeWindow(
+    messages.filter(
+      ({ processStatus }) => processStatus === ProcessStatus.PROCESSED
+    ),
+    dayAgo
+  );
+  return orderedMessages
+    .map((message) => ({
+      "Название лида": "Запрос на бенч",
+      Статус: "Не обработан",
+      Источник: "Агрегатор",
+      Комментарий: message.text,
+    }))
+    .slice(0, 1); // Here just to have only 1 row downloaded while testsing and figuring out exact schema is going on
+});
 
-export const $searchQuery = createStore<string>('').on(setSearchQuery, (_, query) => query)
+export const $searchResults = createStore<IMessage[]>([])
+  .on(fetchSearchResultsFx.doneData, (_, messages) =>
+    messages.sort((a: IMessage, b: IMessage) => b.date - a.date)
+  )
+  .on(resetSearchResults, () => []);
+
+export const $searchQuery = createStore<string>("").on(
+  setSearchQuery,
+  (_, query) => query
+);

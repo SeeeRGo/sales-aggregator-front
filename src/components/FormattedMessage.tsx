@@ -10,7 +10,7 @@ import { Box, Card, IconButton, Link, Modal, Stack, Typography } from "@mui/mate
 import dayjs from "dayjs";
 import { supabase } from "../db";
 import React, { useCallback, useState } from "react";
-import { MessageStatus } from "@/constants";
+import { MessageStatus, ProcessStatus } from "@/constants";
 import { StatusTooltip } from "./StatusButton";
 import { parseEntities } from "@/parseEntities";
 import { DuplicateMessages } from "./DuplicateMessages";
@@ -28,7 +28,7 @@ export const FormattedMessage = ({ message, ignoreDuplicates, onStatusChange }: 
   const [copyMessages, setCopyMessages] = useState<{
     [x: string]: any;
 }[] | null>(null)
-  const isProcessable = message.status === MessageStatus.APPROVED || message.status === MessageStatus.INTERESTING
+  const isProcessable = message.processStatus !== ProcessStatus.PROCESSED && (message.status === MessageStatus.APPROVED || message.status === MessageStatus.INTERESTING) 
   const baseRequest = useCallback(async (status: MessageStatus) => {
     await supabase.from("messages").upsert({
       tg_message_id: message.messageId,

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Tab, Tabs } from "@mui/material";
+import { Box, Button, Fab, Stack, Tab, Tabs } from "@mui/material";
 import { TabPanel } from "@/components/TabPanel";
 import { LoadedMessages } from "@/components/LoadedMessages";
 import { MessageStatus, ProcessStatus } from "@/constants";
@@ -11,10 +11,16 @@ import AddChannelForm from "@/components/AddChannelForm";
 import { SearchForm } from "@/components/SearchForm";
 import { SearchResults } from "@/components/SearchResults";
 import { resetSearchResults, setSearchQuery } from "@/effects/search";
+import { useStore } from "effector-react";
+import { $downloadableMessages } from "@/store/messages";
+import { CSVLink, CSVDownload } from "react-csv";
+
 
 export default function Home() {
   const [value, setValue] = useState(0);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [isMenuOpen, setMenuOpen] = useState(false)
+  const csvData = useStore($downloadableMessages);
 
   const handleChange = (_: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -28,11 +34,14 @@ export default function Home() {
     <main className={`flex flex-col items-center justify-between`}>
       <AddChannelForm />
       <SearchForm onSubmit={() => setSearchOpen(true)} />
-      <SearchResults open={searchOpen} handleClose={() => {
-        setSearchOpen(false)
-        resetSearchResults()
-        setSearchQuery('')
-      }} />
+      <SearchResults
+        open={searchOpen}
+        handleClose={() => {
+          setSearchOpen(false);
+          resetSearchResults();
+          setSearchQuery("");
+        }}
+      />
       <Box
         sx={{
           borderBottom: 1,
@@ -48,7 +57,12 @@ export default function Home() {
           backgroundColor: "rgb(214, 219, 220)",
         }}
       >
-        <Link href="/channels">Каналы</Link>
+        <Stack>
+          <Link href="/channels">Каналы</Link>
+          <CSVLink data={csvData}>
+            <Button>Скачать CSV</Button>
+          </CSVLink>
+        </Stack>
         <Tabs
           value={value}
           onChange={handleChange}
