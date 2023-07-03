@@ -1,5 +1,5 @@
 import { IMessage } from '@/types';
-import { Box, Card, Modal, Stack, Typography } from '@mui/material';
+import { Box, Card, Grid, Modal, Stack, Typography } from '@mui/material';
 import React from 'react'
 import { FormattedMessage } from './FormattedMessage';
 import { useStore } from 'effector-react';
@@ -16,6 +16,7 @@ const modalStyle = {
   border: '2px solid #000',
   boxShadow: 24,
   p: 2,
+  overflow: 'scroll',
 };
 
 interface IProps {
@@ -38,8 +39,16 @@ export const SearchResults: React.FC<IProps> = ({ open, handleClose }) => {
           <Typography variant='h6'>Результаты поиска</Typography>
           <Stack rowGap={1}>
             <Card>{searchQuery}</Card>
+            <Grid container flex={1} rowGap={2}>
+              {searchResults.map(message => (
+                <Grid item xs={12} sm={6} md={3} key={message.messageId}>
+                  <div style={{ margin: 8 }}>
+                    <FormattedMessage  message={message} ignoreDuplicates />
+                  </div>
+                </Grid>
+              ))}
+            </Grid>
             <Stack>
-              {searchResults.map(message => <FormattedMessage key={message.messageId} message={message} />)}
             </Stack>
           </Stack>
         </Stack>

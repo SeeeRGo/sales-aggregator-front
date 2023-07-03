@@ -3,8 +3,9 @@ import { parseLoadedMessage } from "@/utils";
 import { createEffect, createEvent } from "effector";
 
 export const fetchSearchResultsFx = createEffect(async (searchQuery: string) => {
-  const parsedTextSearchQuery = searchQuery.split(' ').map(word => "'" + word + "'").join(' | ')
-  const { data } = await supabase.from("messages").select().textSearch('text', parsedTextSearchQuery)
+  const { data } = await supabase.from("messages").select().textSearch('text', searchQuery, {
+    type: 'websearch',
+  })
   return data?.map(parseLoadedMessage) ?? []
 })
 
