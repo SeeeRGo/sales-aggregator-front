@@ -1,4 +1,5 @@
 import { fetchMessagesFx, insertMessage, updateMessage } from "@/effects/messages";
+import { fetchSearchResultsFx, resetSearchResults, setSearchQuery } from "@/effects/search";
 import { IMessage } from "@/types";
 import { orderMessagesInTimeWindow } from "@/utils";
 import dayjs from "dayjs";
@@ -40,3 +41,9 @@ export const $olderMessages = $messages.map((messages) => {
 
   return orderMessagesInTimeWindow(messages, tenDaysAgo, dayAgo);
 });
+
+export const $searchResults = createStore<IMessage[]>([])
+  .on(fetchSearchResultsFx.doneData, (_, messages) => messages.sort((a: IMessage, b: IMessage) => b.date - a.date))
+  .on(resetSearchResults, () => [])
+
+export const $searchQuery = createStore<string>('').on(setSearchQuery, (_, query) => query)

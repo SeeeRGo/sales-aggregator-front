@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Fab, Tab, Tabs } from "@mui/material";
+import { Box, Tab, Tabs } from "@mui/material";
 import { TabPanel } from "@/components/TabPanel";
 import { LoadedMessages } from "@/components/LoadedMessages";
 import { MessageStatus, ProcessStatus } from "@/constants";
@@ -8,9 +8,12 @@ import { InterestingMessages } from "@/components/InterestingMessages";
 import { fetchMessagesFx } from "@/effects/messages";
 import Link from "next/link";
 import AddChannelForm from "@/components/AddChannelForm";
+import { SearchForm } from "@/components/SearchForm";
+import { SearchResults } from "@/components/SearchResults";
 
 export default function Home() {
   const [value, setValue] = useState(0);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const handleChange = (_: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
@@ -23,6 +26,8 @@ export default function Home() {
   return (
     <main className={`flex flex-col items-center justify-between`}>
       <AddChannelForm />
+      <SearchForm onSubmit={() => setSearchOpen(true)} />
+      <SearchResults open={searchOpen} handleClose={() => setSearchOpen(false)} />
       <Box
         sx={{
           borderBottom: 1,
