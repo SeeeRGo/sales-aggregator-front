@@ -36,7 +36,7 @@ export const SearchResults: React.FC<IProps> = ({ open, handleClose }) => {
       <Box sx={modalStyle}>
         <Stack rowGap={1} alignItems='center'>
           <Typography variant='h6'>Результаты поиска</Typography>
-          <Stack direction="row" columnGap={1}>
+          <Stack rowGap={1}>
             <Card>{searchQuery}</Card>
             <Stack>
               {searchResults.map(message => <FormattedMessage key={message.messageId} message={message} />)}

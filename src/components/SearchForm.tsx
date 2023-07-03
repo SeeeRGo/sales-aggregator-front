@@ -28,7 +28,7 @@ export const SearchForm = ({ onSubmit }: IProps) => {
       <Fab
         color="info"
         onClick={handleClick}
-        sx={{ position: "fixed", bottom: 50, right: 20 }}
+        sx={{ position: "fixed", bottom: 80, right: 20 }}
         aria-label="search"
       >
         <Search/>
@@ -42,7 +42,7 @@ export const SearchForm = ({ onSubmit }: IProps) => {
           horizontal: "left",
         }}
       >
-        <Stack rowGap={1} sx={{ padding: 2 }}>
+        <Stack rowGap={1} sx={{ minWidth: '600px', padding: 2 }}>
           <Typography variant="subtitle1">Поиск похожих сообщений</Typography>
           <TextField
             value={query}

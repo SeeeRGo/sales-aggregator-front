@@ -10,6 +10,7 @@ import Link from "next/link";
 import AddChannelForm from "@/components/AddChannelForm";
 import { SearchForm } from "@/components/SearchForm";
 import { SearchResults } from "@/components/SearchResults";
+import { resetSearchResults, setSearchQuery } from "@/effects/search";
 
 export default function Home() {
   const [value, setValue] = useState(0);
@@ -27,7 +28,11 @@ export default function Home() {
     <main className={`flex flex-col items-center justify-between`}>
       <AddChannelForm />
       <SearchForm onSubmit={() => setSearchOpen(true)} />
-      <SearchResults open={searchOpen} handleClose={() => setSearchOpen(false)} />
+      <SearchResults open={searchOpen} handleClose={() => {
+        setSearchOpen(false)
+        resetSearchResults()
+        setSearchQuery('')
+      }} />
       <Box
         sx={{
           borderBottom: 1,
