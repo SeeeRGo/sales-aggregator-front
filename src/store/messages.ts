@@ -46,9 +46,9 @@ export const $lastDayMessages = $messages.map((messages) => {
 
 export const $olderMessages = $messages.map((messages) => {
   const dayAgo = dayjs().add(-1, "day").unix();
-  const tenDaysAgo = dayjs().add(-10, "day").startOf("day").unix();
+  const fifteenDaysAgo = dayjs().add(-15, "day").startOf("day").unix();
 
-  return orderMessagesInTimeWindow(messages, tenDaysAgo, dayAgo);
+  return orderMessagesInTimeWindow(messages, fifteenDaysAgo, dayAgo);
 });
 
 export const $downloadableMessages = $messages.map((messages) => {
