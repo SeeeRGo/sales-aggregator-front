@@ -2,11 +2,13 @@ import { IMessage } from "@/types";
 import {
   ArchiveOutlined,
   Check,
-  Close,
+  Close as CloseIcon,
   CopyAll,
+  DomainVerificationOutlined,
+  HourglassTop,
   QuestionMark,
 } from "@mui/icons-material";
-import { Box, Card, IconButton, Link, Modal, Stack, Typography } from "@mui/material";
+import { Box, Card, IconButton, Link, Stack, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import { supabase } from "../db";
 import React, { useCallback, useState } from "react";
@@ -15,15 +17,17 @@ import { StatusTooltip } from "./StatusButton";
 import { parseEntities } from "@/parseEntities";
 import { DuplicateMessages } from "./DuplicateMessages";
 import { parseLoadedMessage } from "@/utils";
+import { Close } from "./Close";
 
 interface IProps {
   message: IMessage;
   ignoreDuplicates?: boolean;
   onStatusChange?: () => void;
+  onClose?: () => void;
 }
 
 
-export const FormattedMessage = ({ message, ignoreDuplicates, onStatusChange }: IProps) => {
+export const FormattedMessage = ({ message, ignoreDuplicates, onStatusChange, onClose }: IProps) => {
   const [open, setOpen] = useState(false);
   const [copyMessages, setCopyMessages] = useState<{
     [x: string]: any;
@@ -55,15 +59,20 @@ export const FormattedMessage = ({ message, ignoreDuplicates, onStatusChange }: 
   }, [message, ignoreDuplicates, baseRequest])
   return (
     <Card>
-      <div style={{ display: "flex", flexDirection: "column", padding: 12 }}>
-        <div>
-          {dayjs.unix(message.date).format("DD.MM.YYYY HH:mm:ss")} -{" "}
-          {message.status}
-        </div>
-        <div>{message.chatName}</div>
-        {message.link && (
-          <Link href={message.link}>Ссылка на оригинал сообщения</Link>
-        )}
+      
+      <div style={{ display: "flex", flexDirection: "column", padding: 12, position: 'relative' }}>
+        {onClose ? <Close onClose={onClose} /> : null}
+        <Stack rowGap={0.5}>
+          <div>
+            {dayjs.unix(message.date).format("DD.MM.YYYY HH:mm:ss")} -{" "}
+            {message.status}
+          </div>
+          <div style={{ fontSize: '16px', display: 'flex', alignItems: 'flex-end' }}>Статус обработки: {message.processStatus} {message.processStatus === ProcessStatus.PENDING ? <HourglassTop color="info" /> : <DomainVerificationOutlined color="success" />}</div>
+          <div>{message.chatName}</div>
+          {message.link && (
+            <Link href={message.link}>Ссылка на оригинал сообщения</Link>
+          )}
+        </Stack>
         <div className={`text-sm whitespace-pre-line`}>
           {parseEntities(message)}
         </div>
@@ -104,7 +113,7 @@ export const FormattedMessage = ({ message, ignoreDuplicates, onStatusChange }: 
                 if(onStatusChange) onStatusChange()
               }}
             >
-              <Close color="error" />
+              <CloseIcon color="error" />
             </IconButton>
           </StatusTooltip>
           <StatusTooltip title="COPY">

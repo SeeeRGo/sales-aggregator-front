@@ -4,6 +4,8 @@ import React from 'react'
 import { FormattedMessage } from './FormattedMessage';
 import { useStore } from 'effector-react';
 import { $searchQuery, $searchResults } from '@/store/messages';
+import { Close } from './Close';
+import { removeMessageFromSearchResults } from '@/effects/search';
 
 const modalStyle = {
   position: 'absolute' as 'absolute',
@@ -36,14 +38,25 @@ export const SearchResults: React.FC<IProps> = ({ open, handleClose }) => {
     >
       <Box sx={modalStyle}>
         <Stack rowGap={1} alignItems='center'>
-          <Typography variant='h6'>Результаты поиска</Typography>
-          <Stack rowGap={1}>
+          <div>
+            <Typography variant='h6'>Результаты поиска</Typography>
+            <Close onClose={handleClose} />
+          </div>
+          <Stack sx={{ width: '100%'}} rowGap={1}>
             <Card>{searchQuery}</Card>
             <Grid container flex={1} rowGap={2}>
               {searchResults.map(message => (
                 <Grid item xs={12} sm={6} md={3} key={message.messageId}>
                   <div style={{ margin: 8 }}>
-                    <FormattedMessage  message={message} ignoreDuplicates />
+                    <FormattedMessage  
+                    message={message} 
+                    ignoreDuplicates
+                    onStatusChange={() => {
+                      removeMessageFromSearchResults(message)
+                    }}
+                    onClose={() => {
+                      removeMessageFromSearchResults(message)
+                    }} />
                   </div>
                 </Grid>
               ))}

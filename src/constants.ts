@@ -9,9 +9,8 @@ export enum MessageStatus {
 }
 
 export enum ProcessStatus {
-  PENDING = "PENDING",
-  PROCESSED = "PROCESSED",
-  DELETED = "DELETED",
+  PENDING = "Ждет обработки",
+  PROCESSED = "В битриксе",
 }
 
 export const CHANNEL_TYPE_STRINGS: Record<ChannelTypeFilter, string> = {

@@ -6,6 +6,7 @@ import {
 } from "@/effects/messages";
 import {
   fetchSearchResultsFx,
+  removeMessageFromSearchResults,
   resetSearchResults,
   setSearchQuery,
 } from "@/effects/search";
@@ -73,7 +74,8 @@ export const $searchResults = createStore<IMessage[]>([])
   .on(fetchSearchResultsFx.doneData, (_, messages) =>
     messages.sort((a: IMessage, b: IMessage) => b.date - a.date)
   )
-  .on(resetSearchResults, () => []);
+  .on(resetSearchResults, () => [])
+  .on(removeMessageFromSearchResults, (state, { messageId }) => state.filter(message => message.messageId !== messageId))
 
 export const $searchQuery = createStore<string>("").on(
   setSearchQuery,
