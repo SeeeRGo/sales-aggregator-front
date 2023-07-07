@@ -13,18 +13,17 @@ import { SearchResults } from "@/components/SearchResults";
 import { resetSearchResults, setSearchQuery } from "@/effects/search";
 import { useStore } from "effector-react";
 import { $downloadableMessages } from "@/store/messages";
-import { CSVLink, CSVDownload } from "react-csv";
-
+import { CSVLink } from "react-csv";
 
 export default function Home() {
   const [value, setValue] = useState(0);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [isMenuOpen, setMenuOpen] = useState(false)
   const csvData = useStore($downloadableMessages);
 
   const handleChange = (_: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+
 
   useEffect(() => {
     fetchMessagesFx();

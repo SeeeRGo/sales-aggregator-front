@@ -16,7 +16,7 @@ import { MessageStatus, ProcessStatus } from "@/constants";
 import { StatusTooltip } from "./StatusButton";
 import { parseEntities } from "@/parseEntities";
 import { DuplicateMessages } from "./DuplicateMessages";
-import { parseLoadedMessage } from "@/utils";
+import { parseLoadedMessage, sendEmail } from "@/utils";
 import { Close } from "./Close";
 
 interface IProps {
@@ -76,7 +76,6 @@ export const FormattedMessage = ({ message, ignoreDuplicates, onStatusChange, on
         <div className={`text-sm whitespace-pre-line`}>
           {parseEntities(message)}
         </div>
-        <div>Статус обработки: {message.processStatus}</div>
       </div>
       <div className="flex justify-between flex-row">
         <div>
@@ -145,6 +144,7 @@ export const FormattedMessage = ({ message, ignoreDuplicates, onStatusChange, on
                     text: message.text,
                     processed_at: dayjs(),
                   });
+                  await sendEmail(message.text, `Агрегатор запрос из канала ${message.chatName}`)
                   if(onStatusChange) onStatusChange()
                 }}
               >

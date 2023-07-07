@@ -10,6 +10,7 @@ import {
   UpdateChannelStats,
   UpdateChannelSummary,
 } from "./types";
+import emailjs from '@emailjs/browser';
 
 export const parseLoadedMessage = ({
   tg_chat_name,
@@ -298,3 +299,15 @@ export const parseChannel = ({
   channelType,
   rating: typeof rating === 'number' ? `${rating}` : "",
 });
+const recipient = process.env.NEXT_PUBLIC_EMAIL_TO
+const apiKey = process.env.NEXT_PUBLIC_API_KEY
+const makeApiURL = (message: string, subject: string) => `https://api.elasticemail.com/v2/email/send?apikey=${apiKey}&subject=${subject}&from=10sydneyfc@gmail.com&fromName=&sender=&senderName=&msgFrom=&msgFromName=&replyTo=&replyToName=&to=${recipient}&msgTo=&msgCC=&msgBcc=&lists=&segments=&mergeSourceFilename=&dataSource=&channel=&bodyHtml=&bodyText=${message}&charset=&charsetBodyHtml=&charsetBodyText=&encodingType=0&template=&headers_firstname=firstname: myValueHere&postBack=&merge_firstname=John&timeOffSetMinutes=&poolName=My Custom Pool&isTransactional=false&attachments=&trackOpens=true&trackClicks=true&utmSource=source1&utmMedium=medium1&utmCampaign=campaign1&utmContent=content1&bodyAmp=&charsetBodyAmp=`
+export const sendEmail = async (message: string, subject: string) => {
+    try {
+        const response = await fetch(makeApiURL(message, subject));
+        const data = await response.json();
+        console.log(data);
+    } catch (error) {
+        throw error;
+    }
+}
