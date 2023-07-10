@@ -8,7 +8,7 @@ import {
   HourglassTop,
   QuestionMark,
 } from "@mui/icons-material";
-import { Box, Card, IconButton, Link, Stack, Typography } from "@mui/material";
+import { Card, IconButton, Link, Stack, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import { supabase } from "../db";
 import React, { useCallback, useState } from "react";
@@ -16,7 +16,7 @@ import { MessageStatus, ProcessStatus } from "@/constants";
 import { StatusTooltip } from "./StatusButton";
 import { parseEntities } from "@/parseEntities";
 import { DuplicateMessages } from "./DuplicateMessages";
-import { parseLoadedMessage, sendEmail } from "@/utils";
+import { parseLoadedMessage } from "@/utils";
 import { Close } from "./Close";
 
 interface IProps {
@@ -135,6 +135,7 @@ export const FormattedMessage = ({ message, ignoreDuplicates, onStatusChange, on
         <div>
           {isProcessable ? (
             <StatusTooltip title="Сообщение обработано">
+              <Link href={process.env.NEXT_PUBLIC_FORM_LINK} target="_blank">
               <IconButton
                 onClick={async () => {
                   await supabase.from("messages").upsert({
@@ -144,12 +145,12 @@ export const FormattedMessage = ({ message, ignoreDuplicates, onStatusChange, on
                     text: message.text,
                     processed_at: dayjs(),
                   });
-                  await sendEmail(message.text, `Агрегатор запрос из канала ${message.chatName}`)
                   if(onStatusChange) onStatusChange()
                 }}
               >
                 <ArchiveOutlined color="primary" />
               </IconButton>
+              </Link>
             </StatusTooltip>
           ) : null}
         </div>
