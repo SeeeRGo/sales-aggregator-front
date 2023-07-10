@@ -52,24 +52,6 @@ export const $olderMessages = $messages.map((messages) => {
   return orderMessagesInTimeWindow(messages, fifteenDaysAgo, dayAgo);
 });
 
-export const $downloadableMessages = $messages.map((messages) => {
-  const dayAgo = dayjs().add(-1, "day").unix();
-  const orderedMessages = orderMessagesInTimeWindow(
-    messages.filter(
-      ({ processStatus }) => processStatus === ProcessStatus.PROCESSED
-    ),
-    dayAgo
-  );
-  return orderedMessages
-    .map((message) => ({
-      "Название лида": "Запрос на бенч",
-      Статус: "Не обработан",
-      Источник: "Агрегатор",
-      Комментарий: message.text,
-    }))
-    .slice(0, 1); // Here just to have only 1 row downloaded while testsing and figuring out exact schema is going on
-});
-
 export const $searchResults = createStore<IMessage[]>([])
   .on(fetchSearchResultsFx.doneData, (_, messages) =>
     messages.sort((a: IMessage, b: IMessage) => b.date - a.date)
