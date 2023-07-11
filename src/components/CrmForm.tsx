@@ -16,6 +16,7 @@ const modalStyle = {
   border: "2px solid #000",
   boxShadow: 24,
   p: 4,
+  overflowY: "scroll",
 };
 
 interface IProps {
@@ -30,7 +31,6 @@ export const CrmForm: React.FC<IProps> = ({ open, handleClose, message }) => {
     <Modal
       open={open}
       onClose={handleClose}
-      sx={{ overflow: "scroll" }}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -38,8 +38,8 @@ export const CrmForm: React.FC<IProps> = ({ open, handleClose, message }) => {
         <Close onClose={handleClose} />
         <Stack rowGap={1} alignItems="center">
           <Typography variant="h6">Отправить данные в битрикс</Typography>
-          <Stack columnGap={2} direction="row">
-            <Stack rowGap={1} sx={{ width: "100%" }}>
+          <Stack columnGap={2} sx={{ width: "100%" }} direction="row">
+            <Stack rowGap={1} sx={{ width: "100%" }} >
               <FormattedMessage
                 message={message}
                 ignoreDuplicates
