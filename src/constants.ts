@@ -19,3 +19,5 @@ export const CHANNEL_TYPE_STRINGS: Record<ChannelTypeFilter, string> = {
   CHANNEL: 'Канал',
   BOT: 'Бот',
 }
+
+export const maxAllowedCommentLength = 2000;

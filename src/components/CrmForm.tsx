@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { FormattedMessage } from "./FormattedMessage";
 import { IMessage } from "@/types";
 import { Close } from "./Close";
+import { maxAllowedCommentLength } from "@/constants";
 
 const modalStyle = {
   position: "absolute" as "absolute",
@@ -16,8 +17,6 @@ const modalStyle = {
   boxShadow: 24,
   p: 4,
 };
-
-const maxAllowedCommentLength = 500;
 
 interface IProps {
   open: boolean;
@@ -69,13 +68,15 @@ export const CrmForm: React.FC<IProps> = ({ open, handleClose, message }) => {
               />
             </Stack>
             <script data-b24-form="inline/11/qiykwj" data-skip-moving="true">
-              {(function (w, d, u) {
+              {
+              function (w, d, u) {
                 var s = d.createElement("script");
                 s.async = true;
                 s.src = u + "?" + ((Date.now() / 180000) | 0);
                 var h = d.getElementsByTagName("script")[0];
-                h.parentNode.insertBefore(s, h);
-              })(
+                h.parentNode?.insertBefore(s, h);
+                return undefined
+              }(
                 window,
                 document,
                 "https://cdn-ru.bitrix24.ru/b20819102/crm/form/loader_11.js"

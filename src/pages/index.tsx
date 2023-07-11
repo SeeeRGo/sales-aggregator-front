@@ -11,8 +11,6 @@ import AddChannelForm from "@/components/AddChannelForm";
 import { SearchForm } from "@/components/SearchForm";
 import { SearchResults } from "@/components/SearchResults";
 import { resetSearchResults, setSearchQuery } from "@/effects/search";
-import { useStore } from "effector-react";
-import { CSVLink } from "react-csv";
 
 export default function Home() {
   const [value, setValue] = useState(0);
